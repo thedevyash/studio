@@ -107,7 +107,7 @@ function LandingPageContent() {
                 </div>
             </header>
             
-            <div className="relative pt-24 text-center">
+            <div className="relative text-center pt-24">
                 <div className="hero-background-image" data-ai-hint="hero background" />
                 <div className="container mx-auto px-4">
                     <div className="py-24 md:py-32">

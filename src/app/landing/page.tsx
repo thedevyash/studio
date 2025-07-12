@@ -109,14 +109,14 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-background relative landing-background">
-      <header className="fixed top-0 left-0 right-0 z-40 glass-card mx-4 md:mx-auto md:max-w-4xl mt-4">
+      <header className="fixed top-0 left-0 right-0 z-40 glass-header">
           <div className="container mx-auto px-4 py-3 flex justify-between items-center">
               <h2 className="font-bold text-xl text-white">Habit Horizon</h2>
               <Button onClick={() => setShowAuth(true)} size="sm">Get Started</Button>
           </div>
       </header>
 
-      <div className="relative z-20 container mx-auto px-4">
+      <div className="relative z-20 container mx-auto px-4 pt-24">
         
         {/* Hero Section */}
         <section className="py-24 md:py-32 text-center">

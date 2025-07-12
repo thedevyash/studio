@@ -84,6 +84,9 @@
   .glass-card {
     @apply bg-card/60 backdrop-blur-xl border border-white/10 rounded-lg shadow-lg;
   }
+  .glass-header {
+    @apply bg-card/60 backdrop-blur-xl border-x-0 border-t-0 border-b border-white/10 shadow-lg;
+  }
 }
 
 @layer utilities {

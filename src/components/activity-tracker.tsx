@@ -5,13 +5,8 @@ import type { ActivityData } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dumbbell, Minus, Plus, CheckCircle2, Award } from "lucide-react";
+import { Dumbbell, Minus, Plus, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface ActivityTrackerProps {
-  data: ActivityData;
-  onUpdate: (type: 'water' | 'exercise', value: number | boolean) => void;
-}
 
 const WaterGlass = ({ percentage }: { percentage: number }) => {
   const waterLevel = Math.max(0, Math.min(100, percentage));

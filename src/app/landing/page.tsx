@@ -109,7 +109,7 @@ function LandingPageContent() {
             
             <div className="relative text-center hero-section-background" data-ai-hint="hero background">
                  <div className="container mx-auto px-4">
-                    <div className="relative py-24 md:py-32 pt-36 md:pt-48">
+                    <div className="relative pt-36 pb-24 md:pt-48 md:pb-32">
                          <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}

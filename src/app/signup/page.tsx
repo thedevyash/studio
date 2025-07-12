@@ -27,7 +27,7 @@ const formSchema = z.object({
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { user, setTempUser } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,10 +45,13 @@ export default function SignUpPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     if (!isFirebaseConfigured) {
-        // Bypass Firebase if not configured
-        setTempUser({ email: values.email });
-        router.push("/");
-        return;
+      toast({
+        variant: "destructive",
+        title: "Firebase Not Configured",
+        description: "Please add your Firebase credentials to .env.local to enable authentication.",
+      });
+      setLoading(false);
+      return;
     }
 
     try {
@@ -79,7 +82,7 @@ export default function SignUpPage() {
               <Terminal className="h-4 w-4" />
               <AlertTitle>Firebase Not Configured</AlertTitle>
               <AlertDescription>
-                Using demo mode. Add credentials to <code>.env.local</code> to enable real authentication.
+                Add your credentials to <code>.env.local</code> to enable real authentication.
               </AlertDescription>
             </Alert>
           )}
@@ -111,7 +114,7 @@ export default function SignUpPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading || !isFirebaseConfigured}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create account
               </Button>

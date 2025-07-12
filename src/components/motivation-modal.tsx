@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -28,8 +29,8 @@ export function MotivationModal({ isOpen, setOpen, habit, completedToday }: Moti
   const [error, setError] = useState<string | null>(null);
   const [isNudge, setIsNudge] = useState(false);
 
-  const missedDays = habit.lastCompleted ? differenceInCalendarDays(new Date(), parseISO(habit.lastCompleted)) : Infinity;
-  const needsNudge = !completedToday && missedDays >= 3;
+  const missedDays = habit.lastCompleted ? differenceInCalendarDays(new Date(), parseISO(habit.lastCompleted)) : 0;
+  const needsNudge = !completedToday && habit.lastCompleted && missedDays >= 3;
 
   const fetchMotivation = async () => {
     setLoading(true);

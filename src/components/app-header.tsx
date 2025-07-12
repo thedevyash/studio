@@ -1,8 +1,14 @@
+
 "use client"
 
 import type { Habit } from "@/types";
 import { AddHabitDialog } from "@/components/add-habit-dialog";
 import { Progress } from "@/components/ui/progress";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "./ui/button";
+import { auth } from "@/lib/firebase";
+import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface AppHeaderProps {
   habits: Habit[];
@@ -11,8 +17,15 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({ habits, onAddHabit, completedTodayCount }: AppHeaderProps) {
+  const { user } = useAuth();
+  const router = useRouter();
   const totalHabits = habits.length;
   const progress = totalHabits > 0 ? (completedTodayCount / totalHabits) * 100 : 0;
+
+  const handleLogout = async () => {
+    await auth.signOut();
+    router.push('/login');
+  }
 
   return (
     <header className="mb-8">
@@ -21,9 +34,14 @@ export default function AppHeader({ habits, onAddHabit, completedTodayCount }: A
           <h1 className="text-4xl md:text-5xl font-bold text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
             Habit Horizon
           </h1>
-          <p className="text-muted-foreground mt-1">Your daily dashboard for a better you.</p>
+          <p className="text-muted-foreground mt-1">Welcome, {user?.email}</p>
         </div>
-        <AddHabitDialog onSave={onAddHabit} />
+        <div className="flex items-center gap-4">
+            <AddHabitDialog onSave={onAddHabit} />
+            <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
+                <LogOut className="h-5 w-5" />
+            </Button>
+        </div>
       </div>
       {totalHabits > 0 && (
         <div className="bg-card p-4 rounded-lg shadow-sm">

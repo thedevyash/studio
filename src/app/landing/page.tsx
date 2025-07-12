@@ -89,7 +89,7 @@ export default function LandingPage() {
     <main className="min-h-screen w-full overflow-hidden bg-black relative">
        <div className="absolute inset-0 z-0 h-full w-full">
          <Suspense fallback={<div className="w-full h-full bg-black" />}>
-            <Spline scene="https://prod.spline.design/iW1n5s0dYfdxXwhE/scene.splinecode" />
+            <Spline scene="https://prod.spline.design/e-4T6CJ0wFBZFc6e/scene.splinecode" />
         </Suspense>
       </div>
       

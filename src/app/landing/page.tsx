@@ -102,7 +102,8 @@ function LandingPageContent() {
             </header>
 
             <div className="container mx-auto px-4 pt-24">
-                <section className="py-24 md:py-32 text-center">
+                <section className="py-24 md:py-32 text-center relative">
+                    <div className="hero-background-image" data-ai-hint="hero background"></div>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -266,7 +267,7 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen w-full overflow-x-hidden landing-page-main">
+    <main className="min-h-screen w-full overflow-x-hidden">
         <Suspense fallback={<div className="min-h-screen w-full" />}>
             <LandingPageContent />
         </Suspense>

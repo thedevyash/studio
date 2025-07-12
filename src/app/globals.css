@@ -69,13 +69,14 @@
     @apply bg-background text-foreground;
   }
 
-  .landing-page-main {
+  .hero-background-image {
     background-image: url('/hero-background.png');
-    background-size: 100% 800px;
+    background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
-    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    @apply absolute -z-10 inset-0;
   }
 }
 

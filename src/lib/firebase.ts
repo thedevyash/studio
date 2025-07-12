@@ -8,11 +8,11 @@ import config from "@/config";
 // Your web app's Firebase configuration is now managed in src/config.ts
 const firebaseConfig = {
   apiKey: config.firebase.apiKey,
-  authDomain: "habithorizon-ea3b2.firebaseapp.com",
-  projectId: "habithorizon-ea3b2",
-  storageBucket: "habithorizon-ea3b2.appspot.com",
-  messagingSenderId: "675786351708",
-  appId: "1:675786351708:web:0879836339d772f050f299"
+  authDomain: config.firebase.authDomain,
+  projectId: config.firebase.projectId,
+  storageBucket: config.firebase.storageBucket,
+  messagingSenderId: config.firebase.messagingSenderId,
+  appId: config.firebase.appId
 };
 
 // Initialize Firebase

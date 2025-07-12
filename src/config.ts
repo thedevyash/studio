@@ -1,4 +1,4 @@
-// src/config.ts
+
 
 const config = {
   firebase: {

@@ -63,7 +63,7 @@ export function MotivationModal({ isOpen, setOpen, habit, completedToday }: Moti
     setMotivation(null);
     setStory(null);
     setIsPlaying(false);
-    setIsNudge(needsNudge);
+    setIsNudge(needsNudge==""?false:true);
     
     try {
       let result;

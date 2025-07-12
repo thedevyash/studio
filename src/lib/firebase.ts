@@ -6,7 +6,7 @@ import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC7RLj7A6Dqzd5kj9jqCFrriRGKTNyHZ5c",
+  apiKey: process.env.apikey_fire,
   authDomain: "habithorizon-ea3b2.firebaseapp.com",
   projectId: "habithorizon-ea3b2",
   storageBucket: "habithorizon-ea3b2.storage.app",

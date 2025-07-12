@@ -45,5 +45,3 @@ export function TestimonialCard({ quote, name, role, index }: TestimonialCardPro
     </motion.div>
   );
 }
-
-    

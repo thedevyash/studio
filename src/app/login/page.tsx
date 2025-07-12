@@ -115,5 +115,3 @@ export default function LoginPage({ onSwitchToSignUp }: LoginPageProps) {
     </div>
   );
 }
-
-    

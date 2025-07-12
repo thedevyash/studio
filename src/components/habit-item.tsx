@@ -103,5 +103,3 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
     </>
   );
 }
-
-    

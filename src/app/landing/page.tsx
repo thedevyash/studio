@@ -115,16 +115,19 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
+                className="max-w-3xl mx-auto"
              >
-                <h1 className="text-4xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400">
-                    Build Better Habits with <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Habit Horizon</span>
-                </h1>
-                <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mt-4">
-                    Your intelligent partner in personal growth. Track, analyze, and conquer your goals with the power of AI.
-                </p>
-                <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
-                    Get Started Free
-                </Button>
+                <div className="glass-card p-6 md:p-10">
+                    <h1 className="text-4xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400">
+                        Build Better Habits with <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Habit Horizon</span>
+                    </h1>
+                    <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mt-4">
+                        Your intelligent partner in personal growth. Track, analyze, and conquer your goals with the power of AI.
+                    </p>
+                    <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
+                        Get Started Free
+                    </Button>
+                </div>
             </motion.div>
         </section>
 

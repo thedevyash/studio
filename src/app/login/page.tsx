@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -37,10 +37,11 @@ export default function LoginPage() {
 
   const isFirebaseConfigured = !!auth;
 
-  if (user) {
+  useEffect(() => {
+    if (user) {
       router.push('/');
-      return null;
-  }
+    }
+  }, [user, router]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
@@ -66,6 +67,14 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-16 w-16 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">

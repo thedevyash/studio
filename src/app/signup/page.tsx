@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
@@ -37,10 +37,11 @@ export default function SignUpPage() {
 
   const isFirebaseConfigured = !!auth;
 
-  if (user) {
-    router.push('/');
-    return null;
-  }
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
@@ -57,7 +58,7 @@ export default function SignUpPage() {
     try {
       await createUserWithEmailAndPassword(auth, values.email, values.password);
       router.push("/");
-    } catch (error: any) {
+    } catch (error: any) => {
       toast({
         variant: "destructive",
         title: "Sign Up Failed",
@@ -66,6 +67,14 @@ export default function SignUpPage() {
       setLoading(false);
     }
   };
+
+  if (user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-16 w-16 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">

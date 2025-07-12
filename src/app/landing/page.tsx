@@ -267,10 +267,13 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen w-full overflow-x-hidden bg-background relative landing-background">
-      <Suspense fallback={<div className="min-h-screen w-full" />}>
-        <LandingPageContent />
-      </Suspense>
+    <main className="min-h-screen w-full overflow-x-hidden bg-background relative">
+        <div className="absolute inset-0 landing-background z-0" />
+        <div className="relative z-10">
+            <Suspense fallback={<div className="min-h-screen w-full" />}>
+                <LandingPageContent />
+            </Suspense>
+        </div>
     </main>
   );
 }

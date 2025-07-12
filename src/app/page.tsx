@@ -214,7 +214,7 @@ export default function Home() {
       const friendDoc = querySnapshot.docs[0];
       const friendId = friendDoc.id;
   
-      if (userProfile.friends.includes(friendId)) {
+      if ((userProfile.friends || []).includes(friendId)) {
         return { success: false, message: "This user is already your friend." };
       }
   
@@ -226,11 +226,11 @@ export default function Home() {
       batch.update(friendProfileRef, { friends: arrayUnion(user.uid) });
       await batch.commit();
   
-      return { success: true, message: `Successfully added ${email} as a friend!` };
+      return { success: true, message: `Successfully added ${friendDoc.data().name || email} as a friend!` };
   
     } catch (error: any) {
         console.error("Error adding friend:", error);
-        return { success: false, message: "An unexpected error occurred while adding a friend. Check Firestore rules and indexes." };
+        return { success: false, message: "An error occurred while adding a friend. Please ensure your Firestore security rules and indexes are set up correctly." };
     }
   };
 
@@ -248,7 +248,7 @@ export default function Home() {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl p-4 md:p-8">
+    <div className="container mx-auto max-w-4xl p-4 sm:p-6 md:p-8">
       <AppHeader 
         userProfile={userProfile} 
         onAddHabit={handleAddHabit}
@@ -285,3 +285,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

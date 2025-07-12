@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
@@ -122,7 +123,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto max-w-2xl py-12">
+    <div className="container mx-auto max-w-2xl py-8 px-4 sm:py-12">
       <div className="mb-6">
         <Button variant="ghost" onClick={() => router.push('/')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -130,23 +131,23 @@ export default function ProfilePage() {
         </Button>
       </div>
 
-      <Card>
+      <Card className="glass-card">
         <CardHeader>
           <CardTitle className="text-2xl">Your Profile</CardTitle>
           <CardDescription>Manage your personal information and generate your AI avatar.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
-            <div className="flex flex-col items-center gap-6 sm:flex-row">
+            <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
                 <Avatar className="h-28 w-28 border-2 border-primary/50">
                     <AvatarImage src={profile?.photoURL} alt={profile?.name} />
                     <AvatarFallback className="text-4xl">
                         {profile ? getInitials(profile.email) : <Loader2 className="h-8 w-8 animate-spin" />}
                     </AvatarFallback>
                 </Avatar>
-                <div className="text-center sm:text-left">
+                <div className="flex-grow">
                     <h2 className="text-2xl font-bold">{profile?.name || 'Your Name'}</h2>
                     <p className="text-muted-foreground">{profile?.email}</p>
-                     <Button onClick={handleGenerateAvatar} disabled={isGenerating} className="mt-4">
+                     <Button onClick={handleGenerateAvatar} disabled={isGenerating} className="mt-4 w-full sm:w-auto">
                         {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4"/>} 
                         {isGenerating ? 'Generating...' : 'Generate New Avatar'}
                     </Button>
@@ -182,3 +183,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+    

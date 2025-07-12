@@ -3,13 +3,14 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
+import config from "@/config";
 
-// Your web app's Firebase configuration
+// Your web app's Firebase configuration is now managed in src/config.ts
 const firebaseConfig = {
-  apiKey: process.env.apikey_fire,
+  apiKey: config.firebase.apiKey,
   authDomain: "habithorizon-ea3b2.firebaseapp.com",
   projectId: "habithorizon-ea3b2",
-  storageBucket: "habithorizon-ea3b2.storage.app",
+  storageBucket: "habithorizon-ea3b2.appspot.com",
   messagingSenderId: "675786351708",
   appId: "1:675786351708:web:0879836339d772f050f299"
 };

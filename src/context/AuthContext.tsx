@@ -18,11 +18,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If Firebase is not configured, auth will be undefined
     if (!auth) {
-        // Firebase is not configured, stop loading and show app
-        setLoading(false);
+        setLoading(false); // Stop loading, let pages handle the redirect
         return;
     }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -30,14 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => unsubscribe();
   }, []);
-
-  if (loading) {
-    return (
-        <div className="flex items-center justify-center h-screen">
-            <Loader2 className="h-16 w-16 animate-spin text-primary" />
-        </div>
-    )
-  }
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

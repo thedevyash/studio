@@ -18,6 +18,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -26,6 +27,7 @@ const formSchema = z.object({
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -34,6 +36,11 @@ export default function SignUpPage() {
   });
 
   const isFirebaseConfigured = !!auth;
+
+  if (user) {
+    router.push('/');
+    return null;
+  }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!isFirebaseConfigured) return;

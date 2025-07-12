@@ -24,21 +24,18 @@ export default function Home() {
   const isFirebaseConfigured = !!auth;
 
   useEffect(() => {
-    if (!loading && !user && isFirebaseConfigured) {
+    if (!loading && !user) {
       router.push('/login');
     }
-  }, [user, loading, router, isFirebaseConfigured]);
+  }, [user, loading, router]);
 
   useEffect(() => {
     if (user) {
       // TODO: Fetch data from Firestore
       // For now, we'll just set the loaded state to true
       setIsDataLoaded(true);
-    } else if (!loading && !isFirebaseConfigured) {
-      // If firebase is not configured, show the app without data
-      setIsDataLoaded(true);
     }
-  }, [user, loading, isFirebaseConfigured]);
+  }, [user]);
 
   const handleAddHabit = (name: string, description: string) => {
     const newHabit: Habit = {
@@ -135,7 +132,7 @@ export default function Home() {
     return habits.filter(h => (h.history || []).includes(todayStr)).length;
   }, [habits]);
 
-  if ((loading || !isDataLoaded) && isFirebaseConfigured) {
+  if (loading || !isDataLoaded || !user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-16 w-16 animate-spin text-primary" />

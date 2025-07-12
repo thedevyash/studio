@@ -16,20 +16,22 @@ export default function AppHeader({ habits, onAddHabit, completedTodayCount }: A
 
   return (
     <header className="mb-8">
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start mb-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground">Habit Horizon</h1>
-          <p className="text-muted-foreground">Keep track of your daily goals and build lasting habits.</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+            Habit Horizon
+          </h1>
+          <p className="text-muted-foreground mt-1">Your daily dashboard for a better you.</p>
         </div>
         <AddHabitDialog onSave={onAddHabit} />
       </div>
       {totalHabits > 0 && (
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium text-muted-foreground">Daily Progress</span>
-            <span className="text-sm font-bold text-foreground">{completedTodayCount} / {totalHabits}</span>
+        <div className="bg-card p-4 rounded-lg shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-muted-foreground">Habit Progress Today</span>
+            <span className="text-sm font-bold text-primary">{completedTodayCount} / {totalHabits} Completed</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-2.5" />
         </div>
       )}
     </header>

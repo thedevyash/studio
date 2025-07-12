@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import type { Habit } from "@/types";
-import { format, parse, differenceInCalendarDays } from "date-fns";
+import type { Habit, ActivityData } from "@/types";
+import { format, parse, differenceInCalendarDays, subDays } from "date-fns";
 import AppHeader from "@/components/app-header";
 import HabitList from "@/components/habit-list";
+import ActivityTracker from "@/components/activity-tracker";
 import { Skeleton } from "@/components/ui/skeleton";
+import ConsistencyChart from "@/components/consistency-chart";
 
 export default function Home() {
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [activityData, setActivityData] = useState<ActivityData>({ water: 0, exercise: false, date: format(new Date(), 'yyyy-MM-dd')});
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -18,9 +21,23 @@ export default function Home() {
       if (storedHabits) {
         setHabits(JSON.parse(storedHabits));
       }
+      const storedActivity = localStorage.getItem("activity");
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      if (storedActivity) {
+        const parsedActivity: ActivityData = JSON.parse(storedActivity);
+        // Reset if the stored data is not for today
+        if (parsedActivity.date === todayStr) {
+          setActivityData(parsedActivity);
+        } else {
+          localStorage.setItem("activity", JSON.stringify({ ...activityData, date: todayStr }));
+        }
+      } else {
+        localStorage.setItem("activity", JSON.stringify({ ...activityData, date: todayStr }));
+      }
     } catch (error) {
-      console.error("Failed to parse habits from localStorage", error);
+      console.error("Failed to parse from localStorage", error);
       localStorage.removeItem("habits");
+      localStorage.removeItem("activity");
     }
   }, []);
 
@@ -30,6 +47,12 @@ export default function Home() {
     }
   }, [habits, isMounted]);
 
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("activity", JSON.stringify(activityData));
+    }
+  }, [activityData, isMounted]);
+
   const handleAddHabit = (name: string, description: string) => {
     const newHabit: Habit = {
       id: crypto.randomUUID(),
@@ -38,6 +61,7 @@ export default function Home() {
       currentStreak: 0,
       longestStreak: 0,
       lastCompleted: null,
+      history: [],
     };
     setHabits((prev) => [...prev, newHabit]);
   };
@@ -62,37 +86,53 @@ export default function Home() {
         const todayStr = format(new Date(), 'yyyy-MM-dd');
         
         if (checked) {
-          // If already marked for today, do nothing.
-          if (habit.lastCompleted === todayStr) return habit;
+          if (habit.history.includes(todayStr)) return habit;
 
           const lastDate = habit.lastCompleted ? parse(habit.lastCompleted, 'yyyy-MM-dd', new Date()) : null;
           const diff = lastDate ? differenceInCalendarDays(new Date(), lastDate) : Infinity;
 
           const newStreak = (diff === 1) ? habit.currentStreak + 1 : 1;
+          const newHistory = [...habit.history, todayStr].sort().reverse();
 
           return {
             ...habit,
             currentStreak: newStreak,
             longestStreak: Math.max(habit.longestStreak, newStreak),
             lastCompleted: todayStr,
+            history: newHistory,
           };
         } else {
-          // If un-marking, only if it was marked today.
-          if (habit.lastCompleted !== todayStr) return habit;
-          
-          // Revert to the state before today's completion.
-          // This logic assumes a linear progression and is a simplified model.
-          const yesterdayStr = format(new Date(Date.now() - 86400000), 'yyyy-MM-dd');
-          const newStreak = Math.max(0, habit.currentStreak - 1);
+          if (!habit.history.includes(todayStr)) return habit;
+
+          const newHistory = habit.history.filter(d => d !== todayStr);
+          // Simplified streak recalculation. A more robust solution would re-evaluate the entire history.
+          const newStreak = habit.currentStreak > 0 ? habit.currentStreak - 1 : 0;
+          const lastCompleted = newHistory.length > 0 ? newHistory[0] : null;
 
           return {
             ...habit,
             currentStreak: newStreak,
-            lastCompleted: newStreak > 0 ? yesterdayStr : null
+            lastCompleted: lastCompleted,
+            history: newHistory,
           };
         }
       })
     );
+  };
+
+  const handleUpdateActivity = (type: 'water' | 'exercise', value: number | boolean) => {
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    setActivityData(prev => {
+      // If the date changed, reset the values
+      if(prev.date !== todayStr) {
+        return {
+          date: todayStr,
+          water: type === 'water' ? (value as number) : 0,
+          exercise: type === 'exercise' ? (value as boolean) : false,
+        }
+      }
+      return { ...prev, [type]: value };
+    });
   };
 
   const completedTodayCount = useMemo(() => {
@@ -127,6 +167,13 @@ export default function Home() {
           onAddHabit={handleAddHabit}
           completedTodayCount={completedTodayCount}
         />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <ActivityTracker 
+            data={activityData}
+            onUpdate={handleUpdateActivity}
+          />
+          <ConsistencyChart habits={habits} />
+        </div>
         <HabitList
           habits={habits}
           onToggle={handleToggleHabit}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Habit } from "@/types";
 import { format, isToday, parseISO } from "date-fns";
-import { Flame, MoreVertical, Pencil, Sparkles, Trash2 } from "lucide-react";
+import { Flame, MoreVertical, Pencil, Sparkles, Trash2, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -31,13 +31,13 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
 
   return (
     <>
-      <Card className="transition-all hover:shadow-md">
+      <Card className="transition-all hover:shadow-lg hover:-translate-y-1 duration-300 ease-in-out">
         <CardContent className="p-4 flex items-center gap-4">
           <Checkbox
             id={`habit-${habit.id}`}
             checked={isCompletedToday}
             onCheckedChange={(checked) => onToggle(habit.id, !!checked)}
-            className="w-6 h-6"
+            className="w-6 h-6 rounded-full"
             aria-label={`Mark ${habit.name} as completed`}
           />
           <div className="flex-grow">
@@ -47,24 +47,24 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
             <p className="text-sm text-muted-foreground">{habit.description}</p>
           </div>
           <div className="flex items-center gap-4 text-muted-foreground">
-            <div className="flex items-center gap-1" title="Current Streak">
-              <Flame className="w-5 h-5 text-orange-500" />
+            <div className="flex items-center gap-1.5 text-orange-500" title="Current Streak">
+              <Flame className="w-5 h-5" />
               <span className="font-bold text-lg text-foreground">{habit.currentStreak}</span>
             </div>
-            <div className="flex items-center gap-1 text-sm" title="Longest Streak">
-              <Flame className="w-4 h-4" />
+            <div className="flex items-center gap-1.5 text-sm" title="Longest Streak">
+              <TrendingUp className="w-4 h-4" />
               <span>{habit.longestStreak}</span>
             </div>
           </div>
           
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-purple-500 hover:bg-purple-100 dark:hover:bg-purple-900/50" onClick={() => setMotivationOpen(true)}>
+          <Button variant="ghost" size="icon" className="h-9 w-9 text-accent hover:bg-accent/10 dark:hover:bg-accent/20" onClick={() => setMotivationOpen(true)}>
              <Sparkles className="h-5 w-5" />
              <span className="sr-only">Get Motivation</span>
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
                 <MoreVertical className="h-5 w-5" />
                 <span className="sr-only">More options</span>
               </Button>

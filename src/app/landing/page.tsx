@@ -202,7 +202,7 @@ function LandingPageContent() {
 
                  <footer className="container mx-auto px-4 py-8 mt-16 border-t border-border">
                     <div className="text-center text-muted-foreground flex items-center justify-center gap-1.5 flex-wrap">
-                        <p>Meet the developer <a href="https://x.com/thedevyash" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:text-primary transition-colors">@thedevyash</a></p>
+                        <p>Meet the developer <a href="https://github.com/thedevyash" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:text-primary transition-colors">@thedevyash</a></p>
                         <span className="hidden sm:inline">&bull;</span>
                         <p className="flex items-center gap-1.5">
                             Made with <Heart className="w-4 h-4 text-primary fill-current" />

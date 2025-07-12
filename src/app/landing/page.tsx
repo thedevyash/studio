@@ -231,7 +231,7 @@ export default function LandingPage() {
                                     ) : (
                                         <SignUpPage onSwitchToLogin={() => setIsLogin(true)} />
                                     )}
-                                </motion.motion.div>
+                                </motion.div>
                             </AnimatePresence>
                         </div>
                     </GlowingCard>
@@ -245,5 +245,3 @@ export default function LandingPage() {
     </main>
   );
 }
-
-    

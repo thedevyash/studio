@@ -100,30 +100,36 @@ function LandingPageContent() {
                     <Button onClick={() => setShowAuth(true)} size="sm">Get Started</Button>
                 </div>
             </header>
-
-            <div className="container mx-auto px-4 pt-24">
-                <section className="py-24 md:py-32 text-center relative">
+            
+            <section className="relative pt-24 text-center">
+                <div className="absolute top-0 left-0 w-full h-full">
                     <div className="hero-background-image" data-ai-hint="hero background"></div>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="max-w-3xl mx-auto"
-                    >
-                        <div className="glass-card p-6 md:p-10">
-                            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400">
-                                Build Better Habits with <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Habit Horizon</span>
-                            </h1>
-                            <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mt-4">
-                                Your intelligent partner in personal growth. Track, analyze, and conquer your goals with the power of AI.
-                            </p>
-                            <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
-                                Get Started Free
-                            </Button>
-                        </div>
-                    </motion.div>
-                </section>
-
+                </div>
+                <div className="container mx-auto px-4">
+                    <div className="py-24 md:py-32">
+                         <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="max-w-3xl mx-auto"
+                        >
+                            <div className="glass-card p-6 md:p-10">
+                                <h1 className="text-4xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400">
+                                    Build Better Habits with <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Habit Horizon</span>
+                                </h1>
+                                <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mt-4">
+                                    Your intelligent partner in personal growth. Track, analyze, and conquer your goals with the power of AI.
+                                </p>
+                                <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
+                                    Get Started Free
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+            
+            <div className="container mx-auto px-4">
                 <section className="pt-32 pb-16">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">Why Habit Horizon?</h2>

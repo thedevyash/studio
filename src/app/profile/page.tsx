@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react";
@@ -88,7 +87,7 @@ export default function ProfilePage() {
 
     } catch (error) {
       console.error("Error generating avatar:", error);
-      toast({ variant: "destructive", title: "Generation Failed", description: "Could not generate a new avatar." });
+      toast({ variant: "destructive", title: "Generation Failed", description: "Could not generate a new avatar. Please try again." });
     } finally {
       setIsGenerating(false);
     }
@@ -149,7 +148,7 @@ export default function ProfilePage() {
                     <p className="text-muted-foreground">{profile?.email}</p>
                      <Button onClick={handleGenerateAvatar} disabled={isGenerating} className="mt-4">
                         {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4"/>} 
-                        Generate New Avatar
+                        {isGenerating ? 'Generating...' : 'Generate New Avatar'}
                     </Button>
                 </div>
             </div>

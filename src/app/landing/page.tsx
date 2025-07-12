@@ -88,9 +88,168 @@ const cardVariants = {
   },
 };
 
+function LandingPageContent() {
+    const [isLogin, setIsLogin] = useState(true);
+    const [showAuth, setShowAuth] = useState(false);
+
+    return (
+        <>
+            <header className="fixed top-0 left-0 right-0 z-40 glass-header">
+                <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+                    <h2 className="font-bold text-xl text-white">Habit Horizon</h2>
+                    <Button onClick={() => setShowAuth(true)} size="sm">Get Started</Button>
+                </div>
+            </header>
+
+            <div className="relative z-20 container mx-auto px-4 pt-24">
+                <section className="py-24 md:py-32 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="max-w-3xl mx-auto"
+                    >
+                        <div className="glass-card p-6 md:p-10">
+                            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400">
+                                Build Better Habits with <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Habit Horizon</span>
+                            </h1>
+                            <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mt-4">
+                                Your intelligent partner in personal growth. Track, analyze, and conquer your goals with the power of AI.
+                            </p>
+                            <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
+                                Get Started Free
+                            </Button>
+                        </div>
+                    </motion.div>
+                </section>
+
+                <section className="pt-32 pb-16">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold">Why Habit Horizon?</h2>
+                        <p className="text-md md:text-lg text-muted-foreground mt-2">Go beyond simple tracking. We help you understand your habits.</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {features.map((feature, index) => (
+                        <motion.div
+                            key={feature.title}
+                            initial="offscreen"
+                            whileInView="onscreen"
+                            viewport={{ once: true, amount: 0.5 }}
+                            variants={cardVariants}
+                            className="glass-card p-6 rounded-lg h-full flex flex-col"
+                        >
+                            <div className="flex items-start space-x-4 text-left">
+                                <div className="bg-primary/10 p-3 rounded-full">
+                                    <feature.icon className="w-6 h-6 text-primary" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-white text-lg">{feature.title}</h3>
+                                    <p className="text-sm text-slate-300 mt-1">{feature.description}</p>
+                                </div>
+                            </div>
+                            <div className="flex-grow flex items-center justify-center mt-6 min-h-[120px]">
+                            <div className="relative w-48 h-24">
+                                <div className="absolute -top-4 -left-4 w-20 h-20 bg-primary/20 rounded-full filter blur-2xl opacity-50 animate-pulse"></div>
+                                <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-accent/20 rounded-full filter blur-2xl opacity-50 animate-pulse animation-delay-2000"></div>
+                                <div className="absolute top-8 left-12 w-16 h-16 bg-secondary/30 rounded-full filter blur-xl opacity-70"></div>
+                            </div>
+                            </div>
+                        </motion.div>
+                        ))}
+                    </div>
+                </section>
+                
+                <section className="py-16">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold">How It Works</h2>
+                        <p className="text-md md:text-lg text-muted-foreground mt-2">Start your journey in three simple steps.</p>
+                    </div>
+                    <div className="relative">
+                        <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-border/40 -translate-y-1/2"></div>
+                        <svg className="hidden md:block absolute top-1/2 left-0 w-full h-px -translate-y-1/2" width="100%" height="1" viewBox="0 0 100 1" preserveAspectRatio="none">
+                            <path d="M 0,0.5 L 100,0.5" stroke="url(#gradient)" strokeWidth="1" className="animate-stroke-draw" />
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stopColor="hsl(var(--primary))" />
+                                    <stop offset="100%" stopColor="hsl(var(--accent))" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
+                            {howItWorks.map((step, index) => (
+                                <HowItWorksStep key={index} index={index} {...step} />
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="py-16">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold">Loved by People Like You</h2>
+                        <p className="text-md md:text-lg text-muted-foreground mt-2">See what our first users are saying about their growth.</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {testimonials.map((testimonial, index) => (
+                            <TestimonialCard key={index} index={index} {...testimonial} />
+                        ))}
+                    </div>
+                </section>
+
+            </div>
+            
+            <footer className="relative z-20 container mx-auto px-4 py-8 mt-16 border-t border-border">
+                    <div className="text-center text-muted-foreground">
+                        <p>&copy; {new Date().getFullYear()} Habit Horizon. All rights reserved.</p>
+                    </div>
+            </footer>
+
+            <AnimatePresence>
+                {showAuth && (
+                    <motion.div
+                        key="auth-modal"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                        onClick={() => setShowAuth(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.95, y: 20 }}
+                            transition={{ duration: 0.3 }}
+                            className="w-full max-w-md"
+                            onClick={(e) => e.stopPropagation()} 
+                        >
+                            <div className="p-8 rounded-lg glass-card">
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={isLogin ? "login" : "signup"}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        {isLogin ? (
+                                            <LoginPage onSwitchToSignUp={() => setIsLogin(false)} />
+                                        ) : (
+                                            <SignUpPage onSwitchToLogin={() => setIsLogin(true)} />
+                                        )}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                            <div className="text-center mt-4">
+                                <Button variant="link" onClick={() => setShowAuth(false)} className="text-slate-300">Back to Home</Button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
+    );
+}
+
 export default function LandingPage() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [showAuth, setShowAuth] = useState(false);
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -109,165 +268,9 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-background relative landing-background">
-      <header className="fixed top-0 left-0 right-0 z-40 glass-header">
-          <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-              <h2 className="font-bold text-xl text-white">Habit Horizon</h2>
-              <Button onClick={() => setShowAuth(true)} size="sm">Get Started</Button>
-          </div>
-      </header>
-
-      <div className="relative z-20 container mx-auto px-4 pt-24">
-        
-        {/* Hero Section */}
-        <section className="py-24 md:py-32 text-center">
-             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="max-w-3xl mx-auto"
-             >
-                <div className="glass-card p-6 md:p-10">
-                    <h1 className="text-4xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-400">
-                        Build Better Habits with <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">Habit Horizon</span>
-                    </h1>
-                    <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mt-4">
-                        Your intelligent partner in personal growth. Track, analyze, and conquer your goals with the power of AI.
-                    </p>
-                    <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
-                        Get Started Free
-                    </Button>
-                </div>
-            </motion.div>
-        </section>
-
-        {/* Features Section */}
-        <section className="pt-32 pb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold">Why Habit Horizon?</h2>
-            <p className="text-md md:text-lg text-muted-foreground mt-2">Go beyond simple tracking. We help you understand your habits.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial="offscreen"
-                whileInView="onscreen"
-                viewport={{ once: true, amount: 0.5 }}
-                variants={cardVariants}
-                className="glass-card p-6 rounded-lg h-full flex flex-col"
-              >
-                <div className="flex items-start space-x-4 text-left">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                        <feature.icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-white text-lg">{feature.title}</h3>
-                        <p className="text-sm text-slate-300 mt-1">{feature.description}</p>
-                    </div>
-                </div>
-                <div className="flex-grow flex items-center justify-center mt-6 min-h-[120px]">
-                  <div className="relative w-48 h-24">
-                      <div className="absolute -top-4 -left-4 w-20 h-20 bg-primary/20 rounded-full filter blur-2xl opacity-50 animate-pulse"></div>
-                      <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-accent/20 rounded-full filter blur-2xl opacity-50 animate-pulse animation-delay-2000"></div>
-                      <div className="absolute top-8 left-12 w-16 h-16 bg-secondary/30 rounded-full filter blur-xl opacity-70"></div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-        
-        {/* How It Works Section */}
-        <section className="py-16">
-            <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold">How It Works</h2>
-                <p className="text-md md:text-lg text-muted-foreground mt-2">Start your journey in three simple steps.</p>
-            </div>
-            <div className="relative">
-                <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-border/40 -translate-y-1/2"></div>
-                <svg className="hidden md:block absolute top-1/2 left-0 w-full h-px -translate-y-1/2" width="100%" height="1" viewBox="0 0 100 1" preserveAspectRatio="none">
-                    <path d="M 0,0.5 L 100,0.5" stroke="url(#gradient)" strokeWidth="1" className="animate-stroke-draw" />
-                    <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="hsl(var(--primary))" />
-                            <stop offset="100%" stopColor="hsl(var(--accent))" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
-                    {howItWorks.map((step, index) => (
-                        <HowItWorksStep key={index} index={index} {...step} />
-                    ))}
-                </div>
-            </div>
-        </section>
-
-        {/* Testimonials Section */}
-        <section className="py-16">
-            <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold">Loved by People Like You</h2>
-                 <p className="text-md md:text-lg text-muted-foreground mt-2">See what our first users are saying about their growth.</p>
-            </div>
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                 {testimonials.map((testimonial, index) => (
-                     <TestimonialCard key={index} index={index} {...testimonial} />
-                ))}
-             </div>
-        </section>
-
-      </div>
-      
-       {/* Footer */}
-      <footer className="relative z-20 container mx-auto px-4 py-8 mt-16 border-t border-border">
-            <div className="text-center text-muted-foreground">
-                <p>&copy; {new Date().getFullYear()} Habit Horizon. All rights reserved.</p>
-            </div>
-      </footer>
-
-
-      {/* Auth Modal */}
-      <AnimatePresence>
-        {showAuth && (
-            <motion.div
-                key="auth-modal"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-                onClick={() => setShowAuth(false)}
-            >
-                <motion.div
-                    initial={{ scale: 0.95, y: 20 }}
-                    animate={{ scale: 1, y: 0 }}
-                    exit={{ scale: 0.95, y: 20 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full max-w-md"
-                    onClick={(e) => e.stopPropagation()} 
-                >
-                    <div className="p-8 rounded-lg glass-card">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={isLogin ? "login" : "signup"}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                {isLogin ? (
-                                    <LoginPage onSwitchToSignUp={() => setIsLogin(false)} />
-                                ) : (
-                                    <SignUpPage onSwitchToLogin={() => setIsLogin(true)} />
-                                )}
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                     <div className="text-center mt-4">
-                        <Button variant="link" onClick={() => setShowAuth(false)} className="text-slate-300">Back to Home</Button>
-                    </div>
-                </motion.div>
-            </motion.div>
-        )}
-      </AnimatePresence>
+      <Suspense fallback={<div className="min-h-screen w-full" />}>
+        <LandingPageContent />
+      </Suspense>
     </main>
   );
 }

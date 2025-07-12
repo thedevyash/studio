@@ -1,18 +1,18 @@
 
 "use client"
 
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { db, storage } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { useToast } from "@/hooks/use-toast";
 import type { UserProfile } from "@/types";
+import { generateAvatar } from "@/ai/flows/generate-avatar";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, ArrowLeft, Camera } from "lucide-react";
+import { Loader2, ArrowLeft, Wand2 } from "lucide-react";
 
 const profileFormSchema = z.object({
   name: z.string().max(50, { message: "Name must not be longer than 50 characters." }).min(2, { message: "Name must be at least 2 characters." }),
@@ -33,7 +33,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
 
@@ -66,29 +66,31 @@ export default function ProfilePage() {
     fetchProfile();
   }, [user, form]);
 
-  const handlePictureUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0 || !user) {
-      return;
-    }
-    const file = event.target.files[0];
-    setIsUploading(true);
-    
+  const handleGenerateAvatar = async () => {
+    if (!user || !profile) return;
+    setIsGenerating(true);
     try {
+      // 1. Generate the image with Genkit
+      const result = await generateAvatar({ name: profile.name || profile.email });
+      const imageDataUri = result.imageUrl;
+
+      // 2. Upload the base64 data to Firebase Storage
       const storageRef = ref(storage, `profile-pics/${user.uid}`);
-      const snapshot = await uploadBytes(storageRef, file);
+      const snapshot = await uploadString(storageRef, imageDataUri, 'data_url');
       const photoURL = await getDownloadURL(snapshot.ref);
 
+      // 3. Update the user's profile in Firestore
       const userDocRef = doc(db, "users", user.uid);
       await updateDoc(userDocRef, { photoURL });
 
       setProfile(prev => prev ? { ...prev, photoURL } : null);
-      toast({ title: "Success", description: "Profile picture updated!" });
+      toast({ title: "Success", description: "New avatar generated and saved!" });
 
     } catch (error) {
-      console.error("Error uploading file:", error);
-      toast({ variant: "destructive", title: "Upload Failed", description: "Could not upload profile picture." });
+      console.error("Error generating avatar:", error);
+      toast({ variant: "destructive", title: "Generation Failed", description: "Could not generate a new avatar." });
     } finally {
-      setIsUploading(false);
+      setIsGenerating(false);
     }
   };
 
@@ -132,35 +134,23 @@ export default function ProfilePage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Your Profile</CardTitle>
-          <CardDescription>Manage your personal information.</CardDescription>
+          <CardDescription>Manage your personal information and generate your AI avatar.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
-            <div className="flex items-center gap-6">
-                <div className="relative">
-                    <Avatar className="h-24 w-24 border-2 border-primary/50">
-                        <AvatarImage src={profile?.photoURL} alt={profile?.name} />
-                        <AvatarFallback className="text-3xl">
-                            {profile ? getInitials(profile.email) : <Loader2 className="h-8 w-8 animate-spin" />}
-                        </AvatarFallback>
-                    </Avatar>
-                     <Input
-                        type="file"
-                        id="picture"
-                        className="hidden"
-                        accept="image/png, image/jpeg, image/gif"
-                        onChange={handlePictureUpload}
-                        disabled={isUploading}
-                    />
-                    <Label 
-                        htmlFor="picture" 
-                        className="absolute bottom-0 right-0 flex items-center justify-center h-8 w-8 bg-primary rounded-full text-primary-foreground cursor-pointer hover:bg-primary/90 transition-colors"
-                    >
-                       {isUploading ? <Loader2 className="h-5 w-5 animate-spin"/> : <Camera className="h-5 w-5"/>} 
-                    </Label>
-                </div>
-                <div>
+            <div className="flex flex-col items-center gap-6 sm:flex-row">
+                <Avatar className="h-28 w-28 border-2 border-primary/50">
+                    <AvatarImage src={profile?.photoURL} alt={profile?.name} />
+                    <AvatarFallback className="text-4xl">
+                        {profile ? getInitials(profile.email) : <Loader2 className="h-8 w-8 animate-spin" />}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="text-center sm:text-left">
                     <h2 className="text-2xl font-bold">{profile?.name || 'Your Name'}</h2>
                     <p className="text-muted-foreground">{profile?.email}</p>
+                     <Button onClick={handleGenerateAvatar} disabled={isGenerating} className="mt-4">
+                        {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Wand2 className="mr-2 h-4 w-4"/>} 
+                        Generate New Avatar
+                    </Button>
                 </div>
             </div>
 
@@ -176,7 +166,7 @@ export default function ProfilePage() {
                             <Input placeholder="Your display name" {...field} />
                         </FormControl>
                         <FormDescription>
-                            This is the name that will be displayed to others.
+                            This name will be displayed to others and used to inspire your avatar.
                         </FormDescription>
                         <FormMessage />
                         </FormItem>

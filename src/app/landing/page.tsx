@@ -89,6 +89,8 @@ const cardVariants = {
 };
 
 function LandingPageContent() {
+    const { user } = useAuth();
+    const router = useRouter();
     const [isLogin, setIsLogin] = useState(true);
     const [showAuth, setShowAuth] = useState(false);
 
@@ -97,12 +99,16 @@ function LandingPageContent() {
             <header className="fixed top-0 left-0 right-0 z-40 glass-header">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <h2 className="font-bold text-xl text-white">Habit Horizon</h2>
-                    <Button onClick={() => setShowAuth(true)} size="sm">Get Started</Button>
+                    {user ? (
+                         <Button onClick={() => router.push('/dashboard')} size="sm">Dashboard</Button>
+                    ) : (
+                         <Button onClick={() => setShowAuth(true)} size="sm">Sign In / Sign Up</Button>
+                    )}
                 </div>
             </header>
             
-            <section className="relative pt-24 text-center">
-                <div className="hero-background-image" data-ai-hint="hero background"></div>
+            <div className="relative pt-24 text-center">
+                <div className="hero-background-image" data-ai-hint="hero background" />
                 <div className="container mx-auto px-4">
                     <div className="py-24 md:py-32">
                          <motion.div
@@ -125,7 +131,7 @@ function LandingPageContent() {
                         </motion.div>
                     </div>
                 </div>
-            </section>
+            </div>
             
             <div className="container mx-auto px-4">
                 <section className="pt-32 pb-16">
@@ -266,8 +272,10 @@ export default function LandingPage() {
       <div className="min-h-screen w-full flex items-center justify-center" />
     );
   }
-  
-  if (user) {
+
+  // This logic is now handled inside LandingPageContent for the button,
+  // but we keep the main page redirect for a logged-in user trying to access the landing page directly.
+  if (user && router.asPath === '/landing') {
     router.push('/dashboard');
     return (
       <div className="min-h-screen w-full flex items-center justify-center" />

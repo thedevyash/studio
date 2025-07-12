@@ -131,7 +131,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-16">
+        <section className="pt-32 pb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold">Why Habit Horizon?</h2>
             <p className="text-md md:text-lg text-muted-foreground mt-2">Go beyond simple tracking. We help you understand your habits.</p>

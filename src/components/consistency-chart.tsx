@@ -47,10 +47,10 @@ export default function ConsistencyChart({ habits }: ConsistencyChartProps) {
   }
 
   return (
-    <Card className="glass-card">
+    <Card className="glass-card h-full">
       <CardHeader>
-        <CardTitle>Weekly Consistency</CardTitle>
-        <CardDescription>Habits completed over the last 7 days.</CardDescription>
+        <CardTitle>Habit Consistency</CardTitle>
+        <CardDescription>Completed over the last 7 days.</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[150px] w-full">

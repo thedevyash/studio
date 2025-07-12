@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import type { Habit, ActivityData, UserProfile } from "@/types";
-import { format, parse, differenceInCalendarDays } from "date-fns";
+import { format, parse, differenceInCalendarDays, subDays } from "date-fns";
 import AppHeader from "@/components/app-header";
 import HabitList from "@/components/habit-list";
 import ActivityTracker from "@/components/activity-tracker";
@@ -13,15 +13,17 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { app, db } from "@/lib/firebase";
-import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch, updateDoc, arrayUnion, limit } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch, updateDoc, arrayUnion, limit, orderBy } from "firebase/firestore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FriendsList from "@/components/friends-list";
+import DailyVitalsChart from "@/components/daily-vitals-chart";
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [activityData, setActivityData] = useState<ActivityData>({ water: 0, exercise: false, date: format(new Date(), 'yyyy-MM-dd')});
+  const [historicalActivity, setHistoricalActivity] = useState<ActivityData[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
@@ -96,6 +98,19 @@ export default function DashboardPage() {
       });
       unsubscribes.push(activityUnsubscribe);
       
+      // Fetch historical activity data
+      const sevenDaysAgo = format(subDays(new Date(), 6), 'yyyy-MM-dd');
+      const activityHistoryQuery = query(
+        collection(db, "users", user.uid, "activity"),
+        where('date', '>=', sevenDaysAgo),
+        orderBy('date', 'desc')
+      );
+      const historyUnsubscribe = onSnapshot(activityHistoryQuery, (snapshot) => {
+        const historyData = snapshot.docs.map(doc => doc.data() as ActivityData);
+        setHistoricalActivity(historyData);
+      });
+      unsubscribes.push(historyUnsubscribe);
+
       setupInitialData(user.uid);
 
       return () => unsubscribes.forEach(unsub => unsub());
@@ -248,7 +263,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl p-4 sm:p-6 md:p-8">
+    <div className="container mx-auto max-w-7xl p-4 sm:p-6 md:p-8">
       <AppHeader 
         userProfile={userProfile} 
         onAddHabit={handleAddHabit}
@@ -266,7 +281,10 @@ export default function DashboardPage() {
                       data={activityData}
                       onUpdate={handleUpdateActivity}
                   />
-                  <ConsistencyChart habits={habits} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <ConsistencyChart habits={habits} />
+                    <DailyVitalsChart activityData={historicalActivity} />
+                  </div>
               </div>
               <HabitList
                   habits={habits}

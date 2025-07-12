@@ -74,6 +74,10 @@ export default function ProfilePage() {
       const result = await generateAvatar({ name: profile.name || profile.email });
       const imageDataUri = result.imageUrl;
 
+      if (!imageDataUri) {
+         throw new Error("The AI model did not return an image.");
+      }
+
       // 2. Upload the base64 data to Firebase Storage
       const storageRef = ref(storage, `profile-pics/${user.uid}`);
       const snapshot = await uploadString(storageRef, imageDataUri, 'data_url');
@@ -125,7 +129,7 @@ export default function ProfilePage() {
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4 sm:py-12">
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => router.push('/')}>
+        <Button variant="ghost" onClick={() => router.push('/dashboard')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Dashboard
         </Button>
@@ -183,5 +187,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-    

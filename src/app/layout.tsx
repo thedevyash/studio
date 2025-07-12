@@ -3,6 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/AuthContext';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Habit Horizon',
@@ -21,11 +22,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased">
+      <body className={cn("font-body antialiased", "app-background")}>
         <AuthProvider>
-          <main className="min-h-screen w-full">
-            {children}
-          </main>
+          {children}
         </AuthProvider>
         <Toaster />
       </body>

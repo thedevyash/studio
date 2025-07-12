@@ -74,10 +74,12 @@
 
   .landing-background {
     background-color: hsl(var(--background));
-    background-image: url('/hero-background.png');
-    background-size: contain;
-    background-position: center top;
-    background-repeat: no-repeat;
+    background-image: 
+      url('/hero-background.png'), 
+      linear-gradient(180deg, #E0FFFF 0%, #87CEEB 50%, #4682B4 100%);
+    background-size: contain, cover;
+    background-position: center top, center center;
+    background-repeat: no-repeat, no-repeat;
   }
 }
 

@@ -16,6 +16,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -31,7 +33,10 @@ export default function SignUpPage() {
     defaultValues: { email: "", password: "" },
   });
 
+  const isFirebaseConfigured = !!auth;
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!isFirebaseConfigured) return;
     setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, values.email, values.password);
@@ -56,6 +61,15 @@ export default function SignUpPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {!isFirebaseConfigured && (
+            <Alert variant="destructive" className="mb-4">
+              <Terminal className="h-4 w-4" />
+              <AlertTitle>Firebase Not Configured</AlertTitle>
+              <AlertDescription>
+                Please add your Firebase credentials to a <code>.env.local</code> file to enable authentication.
+              </AlertDescription>
+            </Alert>
+          )}
            <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
               <FormField
@@ -65,7 +79,7 @@ export default function SignUpPage() {
                   <FormItem className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <FormControl>
-                      <Input id="email" type="email" placeholder="m@example.com" {...field} />
+                      <Input id="email" type="email" placeholder="m@example.com" {...field} disabled={!isFirebaseConfigured} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -78,13 +92,13 @@ export default function SignUpPage() {
                   <FormItem className="grid gap-2">
                     <Label htmlFor="password">Password</Label>
                      <FormControl>
-                      <Input id="password" type="password" {...field} />
+                      <Input id="password" type="password" {...field} disabled={!isFirebaseConfigured} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading || !isFirebaseConfigured}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create account
               </Button>

@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState } from "react";
 import type { Habit } from "@/types";
-import { isToday, parseISO } from "date-fns";
+import { isToday, parse, parseISO } from "date-fns";
 import { Flame, MoreVertical, Pencil, Sparkles, Trash2, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -27,7 +28,7 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
   const [isEditOpen, setEditOpen] = useState(false);
   const [isMotivationOpen, setMotivationOpen] = useState(false);
 
-  const isCompletedToday = habit.lastCompleted ? isToday(parseISO(habit.lastCompleted + "T00:00:00")) : false;
+  const isCompletedToday = (habit.history || []).includes(new Date().toISOString().split('T')[0]);
 
   const handleToggle = () => {
     onToggle(habit.id, !isCompletedToday);

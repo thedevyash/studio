@@ -12,6 +12,7 @@ import ConsistencyChart from "@/components/consistency-chart";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { auth } from "@/lib/firebase";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -20,19 +21,24 @@ export default function Home() {
   const [activityData, setActivityData] = useState<ActivityData>({ water: 0, exercise: false, date: format(new Date(), 'yyyy-MM-dd')});
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
+  const isFirebaseConfigured = !!auth;
+
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && isFirebaseConfigured) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isFirebaseConfigured]);
 
   useEffect(() => {
     if (user) {
       // TODO: Fetch data from Firestore
       // For now, we'll just set the loaded state to true
       setIsDataLoaded(true);
+    } else if (!loading && !isFirebaseConfigured) {
+      // If firebase is not configured, show the app without data
+      setIsDataLoaded(true);
     }
-  }, [user]);
+  }, [user, loading, isFirebaseConfigured]);
 
   const handleAddHabit = (name: string, description: string) => {
     const newHabit: Habit = {
@@ -126,10 +132,10 @@ export default function Home() {
 
   const completedTodayCount = useMemo(() => {
     const todayStr = format(new Date(), "yyyy-MM-dd");
-    return habits.filter(h => h.lastCompleted === todayStr).length;
+    return habits.filter(h => (h.history || []).includes(todayStr)).length;
   }, [habits]);
 
-  if (loading || !isDataLoaded || !user) {
+  if ((loading || !isDataLoaded) && isFirebaseConfigured) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-16 w-16 animate-spin text-primary" />

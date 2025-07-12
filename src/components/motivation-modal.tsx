@@ -14,7 +14,7 @@ import { generateMotivation, GenerateMotivationOutput } from "@/ai/flows/generat
 import { analyzeHabitStruggles, AnalyzeHabitStrugglesOutput } from "@/ai/flows/analyze-habit-struggles";
 import { Button } from "./ui/button";
 import { Loader2, Sparkles, BrainCircuit } from "lucide-react";
-import { differenceInCalendarDays, parseISO } from "date-fns";
+import { differenceInCalendarDays, parseISO, isValid } from "date-fns";
 
 interface MotivationModalProps {
   isOpen: boolean;
@@ -29,7 +29,8 @@ export function MotivationModal({ isOpen, setOpen, habit, completedToday }: Moti
   const [error, setError] = useState<string | null>(null);
   const [isNudge, setIsNudge] = useState(false);
 
-  const missedDays = habit.lastCompleted ? differenceInCalendarDays(new Date(), parseISO(habit.lastCompleted)) : 0;
+  const lastCompletedDate = habit.lastCompleted ? parseISO(habit.lastCompleted) : null;
+  const missedDays = isValid(lastCompletedDate) ? differenceInCalendarDays(new Date(), lastCompletedDate) : Infinity;
   const needsNudge = !completedToday && habit.lastCompleted && missedDays >= 3;
 
   const fetchMotivation = async () => {

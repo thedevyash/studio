@@ -108,9 +108,9 @@ function LandingPageContent() {
             </header>
             
             <div className="relative text-center pt-24">
-                <div className="hero-background-image" data-ai-hint="hero background" />
                 <div className="container mx-auto px-4">
-                    <div className="py-24 md:py-32">
+                    <div className="relative py-24 md:py-32">
+                         <div className="hero-background-image" data-ai-hint="hero background" />
                          <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -134,7 +134,7 @@ function LandingPageContent() {
             </div>
             
             <div className="container mx-auto px-4">
-                <section className="pt-32 pb-16">
+                <section className="pt-16 pb-16">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">Why Habit Horizon?</h2>
                         <p className="text-md md:text-lg text-muted-foreground mt-2">Go beyond simple tracking. We help you understand your habits.</p>

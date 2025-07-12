@@ -36,6 +36,7 @@ export default function AppHeader({ userProfile, onAddHabit, completedTodayCount
     try {
       await auth.signOut();
       router.push('/landing');
+      router.refresh();
     } catch (error) {
       console.error("Failed to log out", error);
     }

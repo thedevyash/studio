@@ -31,7 +31,7 @@ export default function ConsistencyChart({ habits }: ConsistencyChartProps) {
     return last7Days.map(day => {
       const dateStr = format(day, "yyyy-MM-dd");
       const dayName = format(day, "eee");
-      const completed = habits.filter(habit => habit.history.includes(dateStr)).length;
+      const completed = habits.filter(habit => (habit.history || []).includes(dateStr)).length;
       return {
         date: dayName,
         completed,

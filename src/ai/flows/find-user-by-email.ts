@@ -55,6 +55,9 @@ const findUserByEmailFlow = ai.defineFlow(
       };
     } catch (e: any) {
       console.error('Error in findUserByEmailFlow:', e);
+      if (e.code === 'failed-precondition') {
+        return { error: 'Query requires an index. Please create a Firestore index for the `users` collection on the `email` field.' };
+      }
       return { error: 'An error occurred while searching for the user.' };
     }
   }

@@ -107,8 +107,7 @@ function LandingPageContent() {
                 </div>
             </header>
             
-            <div className="relative text-center">
-                 <div className="hero-background-image" data-ai-hint="hero background" />
+            <div className="relative text-center hero-section-background" data-ai-hint="hero background">
                  <div className="container mx-auto px-4">
                     <div className="relative py-24 md:py-32 pt-36 md:pt-48">
                          <motion.div
@@ -292,5 +291,3 @@ export default function LandingPage() {
     </main>
   );
 }
-
-    

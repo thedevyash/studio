@@ -14,3 +14,9 @@ export interface ActivityData {
   exercise: boolean; // True if exercised
   date: string; // 'yyyy-MM-dd'
 }
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  friends: string[]; // array of friend user UIDs
+}

@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import type { Habit, ActivityData } from "@/types";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import type { Habit, ActivityData, UserProfile } from "@/types";
 import { format, parse, differenceInCalendarDays } from "date-fns";
 import AppHeader from "@/components/app-header";
 import HabitList from "@/components/habit-list";
@@ -12,13 +12,18 @@ import ConsistencyChart from "@/components/consistency-chart";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { getFirebaseAuth } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch } from "firebase/firestore";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FriendsList from "@/components/friends-list";
+
 
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [activityData, setActivityData] = useState<ActivityData>({ water: 0, exercise: false, date: format(new Date(), 'yyyy-MM-dd')});
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
@@ -26,18 +31,77 @@ export default function Home() {
       router.push('/login');
     }
   }, [user, loading, router]);
+  
+  const setupInitialData = useCallback(async (uid: string) => {
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const userHabitsRef = collection(db, "users", uid, "habits");
+    const userActivityRef = doc(db, "users", uid, "activity", todayStr);
+    
+    const habitsSnapshot = await getDocs(userHabitsRef);
+    if (habitsSnapshot.empty) {
+      // No habits, add a default one
+      const welcomeHabit: Omit<Habit, 'id'> = {
+        name: "Log your first habit!",
+        description: "Complete this to get started.",
+        currentStreak: 0,
+        longestStreak: 0,
+        lastCompleted: null,
+        history: [],
+        growthStage: 0,
+      };
+      const newHabitRef = doc(userHabitsRef);
+      await setDoc(newHabitRef, welcomeHabit);
+    }
+    
+    const activitySnap = await getDoc(userActivityRef);
+    if (!activitySnap.exists()) {
+      await setDoc(userActivityRef, { water: 0, exercise: false, date: todayStr });
+    }
+    
+  }, []);
 
   useEffect(() => {
     if (user) {
-      // TODO: Fetch data from Firestore
-      // For now, we'll just set the loaded state to true
-      setIsDataLoaded(true);
-    }
-  }, [user]);
+      const unsubscribes: (() => void)[] = [];
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
 
-  const handleAddHabit = (name: string, description: string) => {
-    const newHabit: Habit = {
-      id: crypto.randomUUID(),
+      const userProfileRef = doc(db, "users", user.uid);
+      const profileUnsubscribe = onSnapshot(userProfileRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setUserProfile({ id: docSnap.id, ...docSnap.data() } as UserProfile);
+        } else {
+          // Create profile if it doesn't exist
+          const newProfile: Omit<UserProfile, 'id'> = { email: user.email!, friends: [] };
+          setDoc(userProfileRef, newProfile);
+        }
+      });
+      unsubscribes.push(profileUnsubscribe);
+
+      const habitsRef = collection(db, "users", user.uid, "habits");
+      const habitsUnsubscribe = onSnapshot(habitsRef, (snapshot) => {
+        const habitsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Habit));
+        setHabits(habitsData);
+        if(!isDataLoaded) setIsDataLoaded(true);
+      });
+      unsubscribes.push(habitsUnsubscribe);
+      
+      const activityRef = doc(db, "users", user.uid, "activity", todayStr);
+      const activityUnsubscribe = onSnapshot(activityRef, (docSnap) => {
+        if(docSnap.exists()){
+          setActivityData(docSnap.data() as ActivityData);
+        }
+      });
+      unsubscribes.push(activityUnsubscribe);
+      
+      setupInitialData(user.uid);
+
+      return () => unsubscribes.forEach(unsub => unsub());
+    }
+  }, [user, isDataLoaded, setupInitialData]);
+
+  const handleAddHabit = async (name: string, description: string) => {
+    if (!user) return;
+    const newHabit: Omit<Habit, 'id'> = {
       name,
       description,
       currentStreak: 0,
@@ -46,83 +110,111 @@ export default function Home() {
       history: [],
       growthStage: 0,
     };
-    // TODO: Save to Firestore
-    setHabits((prev) => [...prev, newHabit]);
+    const newHabitRef = doc(collection(db, "users", user.uid, "habits"));
+    await setDoc(newHabitRef, newHabit);
   };
 
-  const handleEditHabit = (id: string, name: string, description: string) => {
-    // TODO: Update in Firestore
-    setHabits((prev) =>
-      prev.map((habit) =>
-        habit.id === id ? { ...habit, name, description } : habit
-      )
-    );
+  const handleEditHabit = async (id: string, name: string, description: string) => {
+     if (!user) return;
+     const habitRef = doc(db, "users", user.uid, "habits", id);
+     await setDoc(habitRef, { name, description }, { merge: true });
   };
 
-  const handleDeleteHabit = (id: string) => {
-    // TODO: Delete from Firestore
-    setHabits((prev) => prev.filter((habit) => habit.id !== id));
+  const handleDeleteHabit = async (id: string) => {
+    if (!user) return;
+    const habitRef = doc(db, "users", user.uid, "habits", id);
+    const batch = writeBatch(db);
+    batch.delete(habitRef);
+    await batch.commit();
   };
 
   const handleToggleHabit = (id: string, checked: boolean) => {
-    setHabits(prevHabits =>
-      prevHabits.map(habit => {
-        if (habit.id !== id) return habit;
+    if (!user) return;
+    const habitToUpdate = habits.find(h => h.id === id);
+    if (!habitToUpdate) return;
+    
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    let updatedHabit: Habit;
 
-        const todayStr = format(new Date(), 'yyyy-MM-dd');
+    if (checked) {
+        if ((habitToUpdate.history || []).includes(todayStr)) return;
+
+        const lastDate = habitToUpdate.lastCompleted ? parse(habitToUpdate.lastCompleted, 'yyyy-MM-dd', new Date()) : null;
+        const diff = lastDate ? differenceInCalendarDays(new Date(), lastDate) : Infinity;
+
+        const newStreak = (diff === 1) ? habitToUpdate.currentStreak + 1 : 1;
+        const newHistory = [...(habitToUpdate.history || []), todayStr].sort().reverse();
         
-        let updatedHabit: Habit;
+        const newGrowthStage = Math.min((habitToUpdate.growthStage || 0) + 1, 5);
 
-        if (checked) {
-          if ((habit.history || []).includes(todayStr)) return habit;
+        updatedHabit = {
+          ...habitToUpdate,
+          currentStreak: newStreak,
+          longestStreak: Math.max(habitToUpdate.longestStreak, newStreak),
+          lastCompleted: todayStr,
+          history: newHistory,
+          growthStage: newGrowthStage,
+        };
+    } else {
+        if (!(habitToUpdate.history || []).includes(todayStr)) return;
 
-          const lastDate = habit.lastCompleted ? parse(habit.lastCompleted, 'yyyy-MM-dd', new Date()) : null;
-          const diff = lastDate ? differenceInCalendarDays(new Date(), lastDate) : Infinity;
+        const newHistory = (habitToUpdate.history || []).filter(d => d !== todayStr);
+        const newStreak = habitToUpdate.currentStreak > 0 ? habitToUpdate.currentStreak - 1 : 0;
+        const lastCompleted = newHistory.length > 0 ? newHistory[0] : null;
+        const newGrowthStage = Math.max((habitToUpdate.growthStage || 0) - 1, 0);
 
-          const newStreak = (diff === 1) ? habit.currentStreak + 1 : 1;
-          const newHistory = [...(habit.history || []), todayStr].sort().reverse();
-          
-          const newGrowthStage = Math.min((habit.growthStage || 0) + 1, 5);
+        updatedHabit = {
+          ...habitToUpdate,
+          currentStreak: newStreak,
+          lastCompleted: lastCompleted,
+          history: newHistory,
+          growthStage: newGrowthStage,
+        };
+    }
 
-          updatedHabit = {
-            ...habit,
-            currentStreak: newStreak,
-            longestStreak: Math.max(habit.longestStreak, newStreak),
-            lastCompleted: todayStr,
-            history: newHistory,
-            growthStage: newGrowthStage,
-          };
-        } else {
-          if (!(habit.history || []).includes(todayStr)) return habit;
-
-          const newHistory = (habit.history || []).filter(d => d !== todayStr);
-          const newStreak = habit.currentStreak > 0 ? habit.currentStreak - 1 : 0;
-          const lastCompleted = newHistory.length > 0 ? newHistory[0] : null;
-          const newGrowthStage = Math.max((habit.growthStage || 0) - 1, 0);
-
-          updatedHabit = {
-            ...habit,
-            currentStreak: newStreak,
-            lastCompleted: lastCompleted,
-            history: newHistory,
-            growthStage: newGrowthStage,
-          };
-        }
-        // TODO: Update habit in Firestore
-        return updatedHabit;
-      })
-    );
+    const habitRef = doc(db, "users", user.uid, "habits", id);
+    setDoc(habitRef, updatedHabit);
   };
   
-  const handleUpdateActivity = (type: 'water' | 'exercise', value: number | boolean) => {
+  const handleUpdateActivity = async (type: 'water' | 'exercise', value: number | boolean) => {
+    if(!user) return;
     const todayStr = format(new Date(), 'yyyy-MM-dd');
     const newActivityData = {
       ...activityData,
       date: todayStr,
       [type]: value,
     };
-    // TODO: Update activity data in Firestore
+    const activityRef = doc(db, "users", user.uid, "activity", todayStr);
+    await setDoc(activityRef, newActivityData, { merge: true });
     setActivityData(newActivityData);
+  };
+  
+  const handleAddFriend = async (email: string) => {
+    if (!user || !userProfile || user.email === email) return { success: false, message: "You cannot add yourself." };
+    if (userProfile.friends.find(f => f === email)) return { success: false, message: "This user is already your friend." };
+
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        return { success: false, message: "User not found." };
+    }
+
+    const friendDoc = querySnapshot.docs[0];
+    const friendId = friendDoc.id;
+    const batch = writeBatch(db);
+
+    // Add friend to current user
+    const userProfileRef = doc(db, "users", user.uid);
+    batch.update(userProfileRef, { friends: [...userProfile.friends, friendId] });
+
+    // Add current user to friend's list
+    const friendProfileRef = doc(db, "users", friendId);
+    batch.update(friendProfileRef, { friends: [...friendDoc.data().friends, user.uid] });
+
+    await batch.commit();
+    return { success: true, message: "Friend added successfully!" };
   };
 
   const completedTodayCount = useMemo(() => {
@@ -130,7 +222,7 @@ export default function Home() {
     return habits.filter(h => (h.history || []).includes(todayStr)).length;
   }, [habits]);
 
-  if (loading || !isDataLoaded || !user) {
+  if (loading || !isDataLoaded || !user || !userProfile) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="h-16 w-16 animate-spin text-primary" />
@@ -142,23 +234,38 @@ export default function Home() {
     <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
       <div className="container mx-auto max-w-3xl p-4 md:p-8">
         <AppHeader 
-          habits={habits} 
+          userProfile={userProfile} 
           onAddHabit={handleAddHabit}
           completedTodayCount={completedTodayCount}
+          totalHabits={habits.length}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <ActivityTracker 
-            data={activityData}
-            onUpdate={handleUpdateActivity}
-          />
-          <ConsistencyChart habits={habits} />
-        </div>
-        <HabitList
-          habits={habits}
-          onToggle={handleToggleHabit}
-          onEdit={handleEditHabit}
-          onDelete={handleDeleteHabit}
-        />
+        <Tabs defaultValue="dashboard" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                <TabsTrigger value="friends">Friends</TabsTrigger>
+            </TabsList>
+            <TabsContent value="dashboard" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <ActivityTracker 
+                        data={activityData}
+                        onUpdate={handleUpdateActivity}
+                    />
+                    <ConsistencyChart habits={habits} />
+                </div>
+                <HabitList
+                    habits={habits}
+                    onToggle={handleToggleHabit}
+                    onEdit={handleEditHabit}
+                    onDelete={handleDeleteHabit}
+                />
+            </TabsContent>
+            <TabsContent value="friends" className="mt-6">
+                <FriendsList
+                  userProfile={userProfile}
+                  onAddFriend={handleAddFriend}
+                />
+            </TabsContent>
+        </Tabs>
       </div>
     </main>
   );

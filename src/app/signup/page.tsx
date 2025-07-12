@@ -4,7 +4,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { app } from "@/lib/firebase";
+import { app, db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import type { UserProfile } from "@/types";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -44,7 +46,15 @@ export default function SignUpPage() {
     setLoading(true);
     try {
       const auth = getAuth(app);
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      
+      // Create a user profile document in Firestore
+      const userProfile: Omit<UserProfile, 'id'> = {
+        email: userCredential.user.email!,
+        friends: [],
+      };
+      await setDoc(doc(db, "users", userCredential.user.uid), userProfile);
+
       router.push("/");
     } catch (error: any) {
       let description = "An unexpected error occurred. Please try again.";
@@ -59,7 +69,7 @@ export default function SignUpPage() {
           description = "The password is too weak. It must be at least 6 characters long.";
           break;
         default:
-          description = error.message;
+          description = "An unknown error occurred.";
           break;
       }
       toast({

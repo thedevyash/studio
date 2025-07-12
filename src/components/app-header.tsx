@@ -1,7 +1,7 @@
 
 "use client"
 
-import type { Habit } from "@/types";
+import type { UserProfile } from "@/types";
 import { AddHabitDialog } from "@/components/add-habit-dialog";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/context/AuthContext";
@@ -11,15 +11,15 @@ import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface AppHeaderProps {
-  habits: Habit[];
+  userProfile: UserProfile | null;
   onAddHabit: (name: string, description: string) => void;
   completedTodayCount: number;
+  totalHabits: number;
 }
 
-export default function AppHeader({ habits, onAddHabit, completedTodayCount }: AppHeaderProps) {
+export default function AppHeader({ userProfile, onAddHabit, completedTodayCount, totalHabits }: AppHeaderProps) {
   const { user } = useAuth();
   const router = useRouter();
-  const totalHabits = habits.length;
   const progress = totalHabits > 0 ? (completedTodayCount / totalHabits) * 100 : 0;
   
   const handleLogout = async () => {
@@ -39,7 +39,7 @@ export default function AppHeader({ habits, onAddHabit, completedTodayCount }: A
             Habit Horizon
           </h1>
           <p className="text-muted-foreground mt-1">
-            {user ? `Welcome, ${user.email}` : 'Welcome!'}
+            {userProfile ? `Welcome, ${userProfile.email}` : 'Welcome!'}
           </p>
         </div>
         <div className="flex items-center gap-4">

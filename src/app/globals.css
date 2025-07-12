@@ -39,7 +39,7 @@
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
-    --primary: 198, 93%, 72%; /* Sky Blue */
+    --primary: 198 93.4% 71.8%;
     --primary-foreground: 222.2 47.4% 1.2%;
     --background-light: 210, 100%, 96%; /* Light Cyan */
     --accent: 220, 13%, 47%; /* Light Slate Gray */
@@ -52,7 +52,7 @@
     --destructive-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 198, 93%, 72%;
+    --ring: 198 93.4% 71.8%;
     --chart-1: 198 93.4% 71.8%;
     --chart-2: 180 93.4% 71.8%;
     --chart-3: 160 93.4% 71.8%;

@@ -4,37 +4,28 @@ import { initializeApp, getApps, getApp, type FirebaseApp, type FirebaseOptions 
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
-let app: FirebaseApp | undefined;
-let auth: Auth | undefined;
-let db: Firestore | undefined;
+let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
 
 // Your web app's Firebase configuration
 const firebaseConfig: FirebaseOptions = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  apiKey: "AIzaSyC7RLj7A6Dqzd5kj9jqCFrriRGKTNyHZ5c",
+  authDomain: "habithorizon-ea3b2.firebaseapp.com",
+  projectId: "habithorizon-ea3b2",
+  storageBucket: "habithorizon-ea3b2.appspot.com",
+  messagingSenderId: "675786351708",
+  appId: "1:675786351708:web:0879836339d772f050f299"
 };
 
-// Log variables to check if they are loaded correctly
-console.log("Firebase Config Loaded from Environment:");
-console.log("API Key:", process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? "Loaded" : "Missing");
-console.log("Auth Domain:", process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
-console.log("Project ID:", process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+// A helper function to determine if Firebase is configured
+export const isFirebaseConfigured = !!firebaseConfig.apiKey;
 
 
-const requiredEnvVars = [
-  'NEXT_PUBLIC_FIREBASE_API_KEY',
-  'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
-  'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-];
-
-const isConfigured = requiredEnvVars.every(key => !!process.env[key]);
-
-if (!isConfigured) {
-    console.warn(`Firebase configuration is incomplete. Some features will be disabled. Please check your .env.local file.`);
+if (!isFirebaseConfigured) {
+    console.warn(`Firebase configuration is incomplete. Some features will be disabled.`);
+    // To prevent crashes when Firebase is not configured, we can assign dummy objects
+    // or handle this more gracefully in the consuming components.
 } else {
     // Initialize Firebase
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -42,4 +33,4 @@ if (!isConfigured) {
     db = getFirestore(app);
 }
 
-export { app, auth, db, isConfigured };
+export { app, auth, db };

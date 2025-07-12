@@ -21,7 +21,7 @@ export function GlowingCard({
   return (
     <div
       className={cn(
-        "group relative w-full rounded-xl bg-slate-900/70 border border-white/10 shadow-2xl",
+        "group relative w-full",
         containerClassName
       )}
       onMouseMove={handleMouseMove}
@@ -42,5 +42,3 @@ export function GlowingCard({
     </div>
   );
 }
-
-    

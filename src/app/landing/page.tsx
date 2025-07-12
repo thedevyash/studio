@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Leaf, Sparkles, BrainCircuit, Users, Target, BarChart, MessageSquare } from "lucide-react";
 import LoginPage from "../login/page";
 import SignUpPage from "../signup/page";
-import { GlowingCard } from "@/components/glowing-card";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -222,27 +221,25 @@ export default function LandingPage() {
                     exit={{ scale: 0.95, y: 20 }}
                     transition={{ duration: 0.3 }}
                     className="w-full max-w-md"
-                    onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the card
+                    onClick={(e) => e.stopPropagation()} 
                 >
-                    <GlowingCard containerClassName="min-h-[480px]">
-                        <div className="p-8">
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={isLogin ? "login" : "signup"}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    {isLogin ? (
-                                        <LoginPage onSwitchToSignUp={() => setIsLogin(false)} />
-                                    ) : (
-                                        <SignUpPage onSwitchToLogin={() => setIsLogin(true)} />
-                                    )}
-                                </motion.div>
-                            </AnimatePresence>
-                        </div>
-                    </GlowingCard>
+                    <div className="p-8 rounded-lg glass-card">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={isLogin ? "login" : "signup"}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                {isLogin ? (
+                                    <LoginPage onSwitchToSignUp={() => setIsLogin(false)} />
+                                ) : (
+                                    <SignUpPage onSwitchToLogin={() => setIsLogin(true)} />
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
                      <div className="text-center mt-4">
                         <Button variant="link" onClick={() => setShowAuth(false)} className="text-slate-300">Back to Home</Button>
                     </div>

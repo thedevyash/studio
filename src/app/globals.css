@@ -73,15 +73,14 @@
   }
 
   .landing-background {
-    background-color: #0c0a09;
+    background-color: hsl(240, 10%, 4%);
     background-image:
-        radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.1) 0px, transparent 50%),
-        radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.1) 0px, transparent 50%),
-        radial-gradient(at 52% 99%, hsla(355, 98%, 76%, 0.1) 0px, transparent 50%),
-        radial-gradient(at 10% 29%, hsla(256, 96%, 68%, 0.1) 0px, transparent 50%),
-        radial-gradient(at 97% 96%, hsla(38, 60%, 74%, 0.1) 0px, transparent 50%),
-        radial-gradient(at 33% 50%, hsla(222, 67%, 73%, 0.1) 0px, transparent 50%),
-        radial-gradient(at 79% 53%, hsla(343, 68%, 79%, 0.1) 0px, transparent 50%);
+      linear-gradient(135deg,
+        hsl(160, 80%, 80%, 0.25) 0%,
+        hsl(220, 90%, 65%, 0.25) 30%,
+        hsl(260, 90%, 55%, 0.25) 70%,
+        hsl(300, 80%, 50%, 0.25) 100%
+      );
   }
 }
 

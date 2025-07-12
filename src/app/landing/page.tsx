@@ -95,7 +95,7 @@ function LandingPageContent() {
     const [showAuth, setShowAuth] = useState(false);
 
     return (
-        <>
+        <div className="bg-background">
             <header className="fixed top-0 left-0 right-0 z-40 glass-header">
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                     <h2 className="font-bold text-xl text-white">Habit Horizon</h2>
@@ -107,10 +107,10 @@ function LandingPageContent() {
                 </div>
             </header>
             
-            <div className="relative text-center pt-24">
-                <div className="container mx-auto px-4">
-                    <div className="relative py-24 md:py-32">
-                         <div className="hero-background-image" data-ai-hint="hero background" />
+            <div className="relative text-center">
+                 <div className="hero-background-image" data-ai-hint="hero background" />
+                 <div className="container mx-auto px-4">
+                    <div className="relative py-24 md:py-32 pt-36 md:pt-48">
                          <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -259,7 +259,7 @@ function LandingPageContent() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </>
+        </div>
     );
 }
 

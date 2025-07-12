@@ -19,7 +19,13 @@ export default function Home() {
     try {
       const storedHabits = localStorage.getItem("habits");
       if (storedHabits) {
-        setHabits(JSON.parse(storedHabits));
+        const parsedHabits = JSON.parse(storedHabits) as Habit[];
+        // Data migration for backward compatibility
+        const migratedHabits = parsedHabits.map(habit => ({
+          ...habit,
+          history: habit.history || [],
+        }));
+        setHabits(migratedHabits);
       }
       const storedActivity = localStorage.getItem("activity");
       const todayStr = format(new Date(), 'yyyy-MM-dd');
@@ -86,13 +92,13 @@ export default function Home() {
         const todayStr = format(new Date(), 'yyyy-MM-dd');
         
         if (checked) {
-          if (habit.history.includes(todayStr)) return habit;
+          if (habit.history?.includes(todayStr)) return habit;
 
           const lastDate = habit.lastCompleted ? parse(habit.lastCompleted, 'yyyy-MM-dd', new Date()) : null;
           const diff = lastDate ? differenceInCalendarDays(new Date(), lastDate) : Infinity;
 
           const newStreak = (diff === 1) ? habit.currentStreak + 1 : 1;
-          const newHistory = [...habit.history, todayStr].sort().reverse();
+          const newHistory = [...(habit.history || []), todayStr].sort().reverse();
 
           return {
             ...habit,
@@ -102,9 +108,9 @@ export default function Home() {
             history: newHistory,
           };
         } else {
-          if (!habit.history.includes(todayStr)) return habit;
+          if (!habit.history?.includes(todayStr)) return habit;
 
-          const newHistory = habit.history.filter(d => d !== todayStr);
+          const newHistory = (habit.history || []).filter(d => d !== todayStr);
           // Simplified streak recalculation. A more robust solution would re-evaluate the entire history.
           const newStreak = habit.currentStreak > 0 ? habit.currentStreak - 1 : 0;
           const lastCompleted = newHistory.length > 0 ? newHistory[0] : null;

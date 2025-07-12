@@ -72,7 +72,7 @@
   .landing-background {
     background-color: hsl(var(--background));
     background-image: url('/hero-background.png');
-    background-size: 100% 900px;
+    background-size: 100% 750px;
     background-position: center top;
     background-repeat: no-repeat;
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);

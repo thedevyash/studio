@@ -235,7 +235,7 @@ export default function DashboardPage() {
   };
 
   const completedTodayCount = useMemo(() => {
-    const todayStr = format(new Date(), "yyyy-M-d");
+    const todayStr = format(new Date(), "yyyy-MM-dd");
     return habits.filter(h => (h.history || []).includes(todayStr)).length;
   }, [habits]);
 

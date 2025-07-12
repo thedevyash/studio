@@ -230,10 +230,7 @@ export default function Home() {
   
     } catch (error: any) {
         console.error("Error adding friend:", error);
-        if (error.code === 'permission-denied') {
-             return { success: false, message: "Permission denied. Check Firestore rules and indexes." };
-        }
-        return { success: false, message: "An unexpected error occurred while adding a friend." };
+        return { success: false, message: "An unexpected error occurred while adding a friend. Check Firestore rules and indexes." };
     }
   };
 
@@ -251,42 +248,40 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <div className="container mx-auto max-w-3xl p-4 md:p-8">
-        <AppHeader 
-          userProfile={userProfile} 
-          onAddHabit={handleAddHabit}
-          completedTodayCount={completedTodayCount}
-          totalHabits={habits.length}
-        />
-        <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                <TabsTrigger value="friends">Friends</TabsTrigger>
-            </TabsList>
-            <TabsContent value="dashboard" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <ActivityTracker 
-                        data={activityData}
-                        onUpdate={handleUpdateActivity}
-                    />
-                    <ConsistencyChart habits={habits} />
-                </div>
-                <HabitList
-                    habits={habits}
-                    onToggle={handleToggleHabit}
-                    onEdit={handleEditHabit}
-                    onDelete={handleDeleteHabit}
-                />
-            </TabsContent>
-            <TabsContent value="friends" className="mt-6">
-                <FriendsList
-                  userProfile={userProfile}
-                  onAddFriend={handleAddFriend}
-                />
-            </TabsContent>
-        </Tabs>
-      </div>
-    </main>
+    <div className="container mx-auto max-w-4xl p-4 md:p-8">
+      <AppHeader 
+        userProfile={userProfile} 
+        onAddHabit={handleAddHabit}
+        completedTodayCount={completedTodayCount}
+        totalHabits={habits.length}
+      />
+      <Tabs defaultValue="dashboard" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-primary/10">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="friends">Friends</TabsTrigger>
+          </TabsList>
+          <TabsContent value="dashboard" className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <ActivityTracker 
+                      data={activityData}
+                      onUpdate={handleUpdateActivity}
+                  />
+                  <ConsistencyChart habits={habits} />
+              </div>
+              <HabitList
+                  habits={habits}
+                  onToggle={handleToggleHabit}
+                  onEdit={handleEditHabit}
+                  onDelete={handleDeleteHabit}
+              />
+          </TabsContent>
+          <TabsContent value="friends" className="mt-6">
+              <FriendsList
+                userProfile={userProfile}
+                onAddFriend={handleAddFriend}
+              />
+          </TabsContent>
+      </Tabs>
+    </div>
   );
 }

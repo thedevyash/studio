@@ -47,7 +47,7 @@ export default function ConsistencyChart({ habits }: ConsistencyChartProps) {
   }
 
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow">
+    <Card className="glass-card">
       <CardHeader>
         <CardTitle>Weekly Consistency</CardTitle>
         <CardDescription>Habits completed over the last 7 days.</CardDescription>

@@ -36,7 +36,7 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
 
   return (
     <>
-      <Card className="transition-all hover:shadow-lg hover:-translate-y-1 duration-300 ease-in-out">
+      <Card className="glass-card transition-all hover:bg-card/80 hover:-translate-y-1 duration-300 ease-in-out">
         <CardContent className="p-4 flex items-center gap-4">
           <HabitPlant 
             growthStage={habit.growthStage || 0}
@@ -50,7 +50,7 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
             <p className="text-sm text-muted-foreground">{habit.description}</p>
           </div>
           <div className="flex items-center gap-4 text-muted-foreground">
-            <div className="flex items-center gap-1.5 text-orange-500" title="Current Streak">
+            <div className="flex items-center gap-1.5 text-orange-400" title="Current Streak">
               <Flame className="w-5 h-5" />
               <span className="font-bold text-lg text-foreground">{habit.currentStreak}</span>
             </div>
@@ -60,7 +60,7 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
             </div>
           </div>
           
-          <Button variant="ghost" size="icon" className="h-9 w-9 text-accent hover:bg-accent/10 dark:hover:bg-accent/20" onClick={() => setMotivationOpen(true)}>
+          <Button variant="ghost" size="icon" className="h-9 w-9 text-accent hover:bg-accent/20" onClick={() => setMotivationOpen(true)}>
              <Sparkles className="h-5 w-5" />
              <span className="sr-only">Get Motivation</span>
           </Button>
@@ -72,7 +72,7 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
                 <span className="sr-only">More options</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="glass-card">
               <DropdownMenuItem onSelect={() => setEditOpen(true)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 <span>Edit</span>

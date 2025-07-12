@@ -59,7 +59,7 @@ export default function FriendsList({ userProfile, onAddFriend }: FriendsListPro
 
   return (
     <>
-      <Card>
+      <Card className="glass-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Your Friends</CardTitle>
@@ -91,7 +91,7 @@ export default function FriendsList({ userProfile, onAddFriend }: FriendsListPro
           {!loading && friends.length > 0 && (
              <div className="space-y-4">
                 {friends.map(friend => (
-                    <div key={friend.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                    <div key={friend.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
                         <div className="flex items-center gap-4">
                             <Avatar>
                                 <AvatarImage src={friend.photoURL} alt={friend.name} data-ai-hint="profile picture" />

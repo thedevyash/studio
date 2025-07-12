@@ -12,7 +12,7 @@ import ConsistencyChart from "@/components/consistency-chart";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { app } from "@/lib/firebase";
+import { app, db } from "@/lib/firebase";
 import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch, updateDoc, arrayUnion, limit } from "firebase/firestore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FriendsList from "@/components/friends-list";
@@ -72,7 +72,7 @@ export default function Home() {
           setUserProfile({ id: docSnap.id, ...docSnap.data() } as UserProfile);
         } else {
           // Create profile if it doesn't exist
-          const newProfile: Omit<UserProfile, 'id'> = { email: user.email!, friends: [] };
+          const newProfile: Omit<UserProfile, 'id'> = { email: user.email!, name: user.email!.split('@')[0], friends: [] };
           setDoc(userProfileRef, newProfile);
         }
       });

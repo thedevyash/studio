@@ -52,6 +52,10 @@ export default function FriendsList({ userProfile, onAddFriend }: FriendsListPro
     
     fetchFriends();
   }, [userProfile.friends]);
+  
+  const getInitials = (email: string) => {
+    return email ? email.substring(0, 2).toUpperCase() : "??";
+  }
 
   return (
     <>
@@ -90,11 +94,12 @@ export default function FriendsList({ userProfile, onAddFriend }: FriendsListPro
                     <div key={friend.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
                         <div className="flex items-center gap-4">
                             <Avatar>
-                                <AvatarImage data-ai-hint="profile picture" src={`https://placehold.co/40x40.png`} />
-                                <AvatarFallback>{friend.email.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                <AvatarImage src={friend.photoURL} alt={friend.name} data-ai-hint="profile picture" />
+                                <AvatarFallback>{getInitials(friend.email)}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <p className="font-semibold">{friend.email}</p>
+                                <p className="font-semibold">{friend.name || friend.email}</p>
+                                {friend.name && <p className="text-sm text-muted-foreground">{friend.email}</p>}
                             </div>
                         </div>
                         {/* Placeholder for future stats */}

@@ -51,7 +51,9 @@ export default function SignUpPage() {
       // Create a user profile document in Firestore
       const userProfile: Omit<UserProfile, 'id'> = {
         email: userCredential.user.email!,
+        name: userCredential.user.email!.split('@')[0], // Default name from email
         friends: [],
+        photoURL: '',
       };
       await setDoc(doc(db, "users", userCredential.user.uid), userProfile);
 

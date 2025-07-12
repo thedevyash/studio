@@ -7,8 +7,18 @@ import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "./ui/button";
 import { auth } from "@/lib/firebase";
-import { LogOut } from "lucide-react";
+import { LogOut, User as UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface AppHeaderProps {
   userProfile: UserProfile | null;
@@ -31,6 +41,10 @@ export default function AppHeader({ userProfile, onAddHabit, completedTodayCount
     }
   }
 
+  const getInitials = (email: string) => {
+    return email ? email.substring(0, 2).toUpperCase() : "??";
+  }
+
   return (
     <header className="mb-8 space-y-6">
       <div className="flex justify-between items-start">
@@ -39,15 +53,42 @@ export default function AppHeader({ userProfile, onAddHabit, completedTodayCount
             Habit Horizon
           </h1>
           <p className="text-muted-foreground mt-1">
-            {userProfile ? `Welcome, ${userProfile.email}` : 'Welcome!'}
+            {userProfile?.name ? `Welcome, ${userProfile.name}` : `Welcome!`}
           </p>
         </div>
         <div className="flex items-center gap-4">
             <AddHabitDialog onSave={onAddHabit} />
-            {user && (
-              <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
-                  <LogOut className="h-5 w-5" />
-              </Button>
+            {user && userProfile && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={userProfile.photoURL} alt={userProfile.name} data-ai-hint="profile picture" />
+                      <AvatarFallback>{getInitials(userProfile.email)}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{userProfile.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {userProfile.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => router.push('/profile')}>
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                     <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
         </div>
       </div>

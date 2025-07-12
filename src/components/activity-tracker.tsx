@@ -57,6 +57,11 @@ const WaterGlass = ({ percentage }: { percentage: number }) => {
   );
 };
 
+interface ActivityTrackerProps {
+    data: ActivityData;
+    onUpdate: (type: 'water' | 'exercise', value: number | boolean) => void;
+}
+
 export default function ActivityTracker({ data, onUpdate }: ActivityTrackerProps) {
   const handleWaterChange = (amount: number) => {
     const newValue = Math.max(0, data.water + amount);

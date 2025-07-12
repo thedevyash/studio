@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { HowItWorksStep } from "@/components/how-it-works-step";
 import { TestimonialCard } from "@/components/testimonial-card";
-import { GlowingCard } from "@/components/glowing-card";
 import { cn } from "@/lib/utils";
 
 const features = [
@@ -110,6 +109,13 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-background relative landing-background">
+      <header className="fixed top-0 left-0 right-0 z-40 glass-card mx-4 md:mx-auto md:max-w-4xl mt-4">
+          <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+              <h2 className="font-bold text-xl text-white">Habit Horizon</h2>
+              <Button onClick={() => setShowAuth(true)} size="sm">Get Started</Button>
+          </div>
+      </header>
+
       <div className="relative z-20 container mx-auto px-4">
         
         {/* Hero Section */}

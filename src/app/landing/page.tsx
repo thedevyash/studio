@@ -101,7 +101,7 @@ function LandingPageContent() {
                 </div>
             </header>
 
-            <div className="relative z-20 container mx-auto px-4 pt-24">
+            <div className="container mx-auto px-4 pt-24">
                 <section className="py-24 md:py-32 text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -195,14 +195,13 @@ function LandingPageContent() {
                     </div>
                 </section>
 
-            </div>
-            
-            <footer className="relative z-20 container mx-auto px-4 py-8 mt-16 border-t border-border">
+                 <footer className="container mx-auto px-4 py-8 mt-16 border-t border-border">
                     <div className="text-center text-muted-foreground">
                         <p>&copy; {new Date().getFullYear()} Habit Horizon. All rights reserved.</p>
                     </div>
-            </footer>
-
+                </footer>
+            </div>
+            
             <AnimatePresence>
                 {showAuth && (
                     <motion.div
@@ -255,25 +254,22 @@ export default function LandingPage() {
 
   if (loading) {
     return (
-      <div className="landing-background min-h-screen w-full flex items-center justify-center" />
+      <div className="min-h-screen w-full flex items-center justify-center" />
     );
   }
   
   if (user) {
     router.push('/dashboard');
     return (
-      <div className="landing-background min-h-screen w-full flex items-center justify-center" />
+      <div className="min-h-screen w-full flex items-center justify-center" />
     );
   }
 
   return (
-    <main className="min-h-screen w-full overflow-x-hidden bg-background relative">
-        <div className="absolute inset-0 landing-background z-0" />
-        <div className="relative z-10">
-            <Suspense fallback={<div className="min-h-screen w-full" />}>
-                <LandingPageContent />
-            </Suspense>
-        </div>
+    <main className="min-h-screen w-full overflow-x-hidden landing-page-main">
+        <Suspense fallback={<div className="min-h-screen w-full" />}>
+            <LandingPageContent />
+        </Suspense>
     </main>
   );
 }

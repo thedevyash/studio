@@ -69,8 +69,7 @@
     @apply bg-background text-foreground;
   }
 
-  .landing-background {
-    background-color: hsl(var(--background));
+  .landing-page-main {
     background-image: url('/hero-background.png');
     background-size: 100% 800px;
     background-position: center top;

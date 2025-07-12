@@ -123,7 +123,7 @@ function LandingPageContent() {
                                 <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mt-4">
                                     Your intelligent partner in personal growth. Track, analyze, and conquer your goals with the power of AI.
                                 </p>
-                                <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-shadow">
+                                <Button size="lg" onClick={() => setShowAuth(true)} className="mt-8">
                                     Get Started Free
                                 </Button>
                             </div>

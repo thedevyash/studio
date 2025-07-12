@@ -18,7 +18,7 @@ export interface ActivityData {
 export interface UserProfile {
   id: string;
   email: string;
-  name?: string;
+  name: string;
   photoURL?: string;
   friends: string[]; // array of friend user UIDs
 }

@@ -11,37 +11,29 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { HowItWorksStep } from "@/components/how-it-works-step";
 import { TestimonialCard } from "@/components/testimonial-card";
-import Image from "next/image";
 import { GlowingCard } from "@/components/glowing-card";
+import { cn } from "@/lib/utils";
 
 const features = [
   {
     icon: Leaf,
     title: "Intuitive Habit Tracking",
     description: "Easily log your habits with a single click. Our beautiful interface helps you visualize your progress and stay motivated day after day.",
-    dataAiHint: "habit tracking",
-    imgSrc: "https://placehold.co/600x400.png",
   },
   {
     icon: Sparkles,
     title: "AI-Powered Motivation",
     description: "Feeling stuck? Get personalized encouragement and tips from our AI coach, tailored to your progress and current streak.",
-    dataAiHint: "motivation",
-    imgSrc: "https://placehold.co/600x400.png",
   },
   {
     icon: BrainCircuit,
     title: "Adaptive Suggestions",
     description: "Our AI analyzes your patterns and offers smart suggestions—like adjusting your schedule or breaking down habits—to help you overcome obstacles.",
-    dataAiHint: "suggestions",
-    imgSrc: "https://placehold.co/600x400.png",
   },
   {
     icon: Users,
     title: "Build a Community",
     description: "Connect with friends, share your progress, and cheer each other on. Building habits is easier when you're not alone.",
-    dataAiHint: "community",
-    imgSrc: "https://placehold.co/600x400.png",
   },
 ];
 
@@ -103,7 +95,14 @@ export default function LandingPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  if (loading || user) {
+  if (loading) {
+    return (
+      <div className="landing-background min-h-screen w-full flex items-center justify-center" />
+    );
+  }
+  
+  if (user) {
+    router.push('/dashboard');
     return (
       <div className="landing-background min-h-screen w-full flex items-center justify-center" />
     );
@@ -143,28 +142,31 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {features.map((feature, index) => (
-              <GlowingCard key={feature.title}>
-                  <motion.div
-                    initial="offscreen"
-                    whileInView="onscreen"
-                    viewport={{ once: true, amount: 0.5 }}
-                    variants={cardVariants}
-                    className="glass-card p-6 rounded-lg h-full"
-                  >
-                    <div className="flex items-start space-x-4 text-left">
-                        <div className="bg-primary/10 p-3 rounded-full">
-                            <feature.icon className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-white text-lg">{feature.title}</h3>
-                            <p className="text-sm text-slate-300 mt-1">{feature.description}</p>
-                        </div>
+              <motion.div
+                key={feature.title}
+                initial="offscreen"
+                whileInView="onscreen"
+                viewport={{ once: true, amount: 0.5 }}
+                variants={cardVariants}
+                className="glass-card p-6 rounded-lg h-full flex flex-col"
+              >
+                <div className="flex items-start space-x-4 text-left">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                        <feature.icon className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="mt-4">
-                        <Image src={feature.imgSrc} width={600} height={400} alt={feature.title} className="rounded-md" data-ai-hint={feature.dataAiHint} />
+                    <div>
+                        <h3 className="font-semibold text-white text-lg">{feature.title}</h3>
+                        <p className="text-sm text-slate-300 mt-1">{feature.description}</p>
                     </div>
-                </motion.div>
-              </GlowingCard>
+                </div>
+                <div className="flex-grow flex items-center justify-center mt-6 min-h-[120px]">
+                  <div className="relative w-48 h-24">
+                      <div className="absolute -top-4 -left-4 w-20 h-20 bg-primary/20 rounded-full filter blur-2xl opacity-50 animate-pulse"></div>
+                      <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-accent/20 rounded-full filter blur-2xl opacity-50 animate-pulse animation-delay-2000"></div>
+                      <div className="absolute top-8 left-12 w-16 h-16 bg-secondary/30 rounded-full filter blur-xl opacity-70"></div>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </section>

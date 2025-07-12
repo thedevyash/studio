@@ -74,7 +74,7 @@
 
   .landing-background {
     background-color: hsl(240, 10%, 4%);
-    background-image: url('/hero-background.jpg'),
+    background-image: url('/hero-background.png'),
       linear-gradient(180deg,
         hsl(220, 90%, 65%, 0.25) 0%,
         hsl(260, 90%, 55%, 0.25) 50%,

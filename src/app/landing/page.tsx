@@ -3,7 +3,7 @@
 
 import { useState, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Leaf, Sparkles, BrainCircuit, Users, Target, BarChart, MessageSquare } from "lucide-react";
+import { Leaf, Sparkles, BrainCircuit, Users, Target, BarChart, MessageSquare, Heart } from "lucide-react";
 import LoginPage from "../login/page";
 import SignUpPage from "../signup/page";
 import { useAuth } from "@/context/AuthContext";
@@ -102,9 +102,7 @@ function LandingPageContent() {
             </header>
             
             <section className="relative pt-24 text-center">
-                <div className="absolute top-0 left-0 w-full h-full">
-                    <div className="hero-background-image" data-ai-hint="hero background"></div>
-                </div>
+                <div className="hero-background-image" data-ai-hint="hero background"></div>
                 <div className="container mx-auto px-4">
                     <div className="py-24 md:py-32">
                          <motion.div
@@ -155,11 +153,11 @@ function LandingPageContent() {
                                 </div>
                             </div>
                             <div className="flex-grow flex items-center justify-center mt-6 min-h-[120px]">
-                            <div className="relative w-48 h-24">
-                                <div className="absolute -top-4 -left-4 w-20 h-20 bg-primary/20 rounded-full filter blur-2xl opacity-50 animate-pulse"></div>
-                                <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-accent/20 rounded-full filter blur-2xl opacity-50 animate-pulse animation-delay-2000"></div>
-                                <div className="absolute top-8 left-12 w-16 h-16 bg-secondary/30 rounded-full filter blur-xl opacity-70"></div>
-                            </div>
+                                <div className="relative w-48 h-24">
+                                    <div className="absolute -top-4 -left-4 w-20 h-20 bg-primary/20 rounded-full filter blur-2xl opacity-50 animate-pulse"></div>
+                                    <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-accent/20 rounded-full filter blur-2xl opacity-50 animate-pulse animation-delay-2000"></div>
+                                    <div className="absolute top-8 left-12 w-16 h-16 bg-secondary/30 rounded-full filter blur-xl opacity-70"></div>
+                                </div>
                             </div>
                         </motion.div>
                         ))}
@@ -203,8 +201,12 @@ function LandingPageContent() {
                 </section>
 
                  <footer className="container mx-auto px-4 py-8 mt-16 border-t border-border">
-                    <div className="text-center text-muted-foreground">
-                        <p>&copy; {new Date().getFullYear()} Habit Horizon. All rights reserved.</p>
+                    <div className="text-center text-muted-foreground flex items-center justify-center gap-1.5 flex-wrap">
+                        <p>Meet the developer <a href="https://x.com/thedevyash" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:text-primary transition-colors">@thedevyash</a></p>
+                        <span className="hidden sm:inline">&bull;</span>
+                        <p className="flex items-center gap-1.5">
+                            Made with <Heart className="w-4 h-4 text-primary fill-current" />
+                        </p>
                     </div>
                 </footer>
             </div>

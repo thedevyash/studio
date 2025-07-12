@@ -165,7 +165,15 @@ export default function LandingPage() {
             </div>
             <div className="relative">
                 <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-border/40 -translate-y-1/2"></div>
-                <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent animate-stroke-draw"></div>
+                <svg className="hidden md:block absolute top-1/2 left-0 w-full h-px -translate-y-1/2" width="100%" height="1" viewBox="0 0 100 1" preserveAspectRatio="none">
+                    <path d="M 0,0.5 L 100,0.5" stroke="url(#gradient)" strokeWidth="1" className="animate-stroke-draw" />
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="hsl(var(--primary))" />
+                            <stop offset="100%" stopColor="hsl(var(--accent))" />
+                        </linearGradient>
+                    </defs>
+                </svg>
                 <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
                     {howItWorks.map((step, index) => (
                         <HowItWorksStep key={index} index={index} {...step} />

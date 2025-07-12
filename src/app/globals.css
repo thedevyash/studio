@@ -138,9 +138,11 @@
   }
 
   .animate-stroke-draw {
-    background-size: 200% auto;
-    animation: -stroke-draw 2s linear infinite;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: -stroke-draw 1s linear forwards;
+    animation-timeline: view();
+    animation-range-start: 25%;
+    animation-range-end: 75%;
   }
 }
-
-    

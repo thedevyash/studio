@@ -35,17 +35,17 @@ export function HowItWorksStep({ icon: Icon, title, description, index }: HowItW
       whileInView="onscreen"
       viewport={{ once: true, amount: 0.8 }}
       variants={variants}
-      className="relative flex flex-col items-center text-center p-6 bg-card/50 rounded-lg"
+      className="relative flex flex-col items-center text-center"
     >
-      <div className="absolute -top-8 bg-background p-1 rounded-full">
-         <div className="bg-primary/20 p-4 rounded-full">
+      <div className="absolute -top-8 bg-background p-1 rounded-full z-10">
+         <div className="bg-primary/20 p-4 rounded-full ring-8 ring-background">
             <Icon className="w-8 h-8 text-primary" />
          </div>
       </div>
-      <h3 className="mt-8 font-bold text-xl">{title}</h3>
-      <p className="text-muted-foreground mt-2">{description}</p>
+      <div className="pt-12 p-6 glass-card w-full h-full">
+        <h3 className="font-bold text-xl">{title}</h3>
+        <p className="text-muted-foreground mt-2">{description}</p>
+      </div>
     </motion.div>
   );
 }
-
-    

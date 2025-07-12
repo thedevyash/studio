@@ -12,7 +12,7 @@ import ConsistencyChart from "@/components/consistency-chart";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -20,8 +20,6 @@ export default function Home() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [activityData, setActivityData] = useState<ActivityData>({ water: 0, exercise: false, date: format(new Date(), 'yyyy-MM-dd')});
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-
-  const isFirebaseConfigured = !!auth;
 
   useEffect(() => {
     if (!loading && !user) {

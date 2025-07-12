@@ -6,7 +6,7 @@ import { AddHabitDialog } from "@/components/add-habit-dialog";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "./ui/button";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -23,7 +23,7 @@ export default function AppHeader({ habits, onAddHabit, completedTodayCount }: A
   const progress = totalHabits > 0 ? (completedTodayCount / totalHabits) * 100 : 0;
   
   const handleLogout = async () => {
-    if (!auth) return;
+    const auth = getFirebaseAuth();
     try {
       await auth.signOut();
       router.push('/login');

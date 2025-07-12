@@ -106,7 +106,6 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-background relative landing-background">
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent via-background/60 to-background" />
       <div className="relative z-20 container mx-auto px-4">
         
         {/* Hero Section */}

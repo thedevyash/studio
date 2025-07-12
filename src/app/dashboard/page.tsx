@@ -281,7 +281,7 @@ export default function DashboardPage() {
                       data={activityData}
                       onUpdate={handleUpdateActivity}
                   />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-6">
                     <ConsistencyChart habits={habits} />
                     <DailyVitalsChart activityData={historicalActivity} />
                   </div>
@@ -303,3 +303,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

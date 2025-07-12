@@ -4,7 +4,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { app } from "@/lib/firebase";
+import { getAuth } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,13 +43,29 @@ export default function SignUpPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
+      const auth = getAuth(app);
       await createUserWithEmailAndPassword(auth, values.email, values.password);
       router.push("/");
     } catch (error: any) {
+      let description = "An unexpected error occurred. Please try again.";
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          description = "This email address is already in use by another account.";
+          break;
+        case "auth/invalid-email":
+          description = "The email address is not valid.";
+          break;
+        case "auth/weak-password":
+          description = "The password is too weak. It must be at least 6 characters long.";
+          break;
+        default:
+          description = error.message;
+          break;
+      }
       toast({
         variant: "destructive",
         title: "Sign Up Failed",
-        description: error.message,
+        description: description,
       });
       setLoading(false);
     }

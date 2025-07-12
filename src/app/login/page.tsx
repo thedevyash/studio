@@ -4,7 +4,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { app } from "@/lib/firebase";
+import { getAuth } from "firebase/auth";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,13 +43,30 @@ export default function LoginPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
+      const auth = getAuth(app);
       await signInWithEmailAndPassword(auth, values.email, values.password);
       router.push("/");
     } catch (error: any) {
+      let description = "An unexpected error occurred. Please try again.";
+      switch (error.code) {
+        case "auth/user-not-found":
+        case "auth/invalid-credential":
+          description = "No account found with this email and password combination.";
+          break;
+        case "auth/wrong-password":
+          description = "Incorrect password. Please try again.";
+          break;
+        case "auth/invalid-email":
+          description = "The email address is not valid.";
+          break;
+        default:
+          description = error.message;
+          break;
+      }
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message,
+        description: description,
       });
       setLoading(false);
     }

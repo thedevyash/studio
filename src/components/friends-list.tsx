@@ -23,27 +23,34 @@ export default function FriendsList({ userProfile, onAddFriend }: FriendsListPro
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    const db = getFirestore(app);
-    if (userProfile.friends && userProfile.friends.length > 0) {
-      const unsubscribes = userProfile.friends.map(friendId => {
-        const friendRef = doc(db, "users", friendId);
-        return onSnapshot(friendRef, (docSnap) => {
-          if (docSnap.exists()) {
-            const friendData = { id: docSnap.id, ...docSnap.data() } as UserProfile;
-            setFriends(prev => {
-              const otherFriends = prev.filter(f => f.id !== friendId);
-              return [...otherFriends, friendData];
+    const fetchFriends = async () => {
+        setLoading(true);
+        if (!userProfile.friends || userProfile.friends.length === 0) {
+            setFriends([]);
+            setLoading(false);
+            return;
+        }
+
+        const db = getFirestore(app);
+        try {
+            const friendPromises = userProfile.friends.map(friendId => {
+                const friendRef = doc(db, "users", friendId);
+                return getDoc(friendRef);
             });
-          }
-        });
-      });
-      setLoading(false);
-      return () => unsubscribes.forEach(unsub => unsub());
-    } else {
-        setFriends([]);
-        setLoading(false);
-    }
+            const friendSnapshots = await Promise.all(friendPromises);
+            const friendData = friendSnapshots
+                .filter(docSnap => docSnap.exists())
+                .map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as UserProfile));
+            setFriends(friendData);
+        } catch (error) {
+            console.error("Error fetching friends:", error);
+            setFriends([]); // Clear friends on error
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    fetchFriends();
   }, [userProfile.friends]);
 
   return (

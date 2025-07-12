@@ -199,7 +199,7 @@ export default function Home() {
   };
   
   const handleAddFriend = async (email: string) => {
-    if (!user || !userProfile) return { success: false, message: "Add friend functionality is temporarily disabled." };
+    if (!user || !userProfile) return { success: false, message: "Add friend functionality is temporarily disabled due to security restrictions." };
     /*
     // This query is not allowed by the current Firestore security rules.
     // It requires an index and a more permissive rule set which is insecure.
@@ -231,7 +231,7 @@ export default function Home() {
 
     await batch.commit();
     */
-    return { success: false, message: "Add friend functionality is temporarily disabled." };
+    return { success: false, message: "Add friend functionality is temporarily disabled due to security restrictions." };
   };
 
   const completedTodayCount = useMemo(() => {

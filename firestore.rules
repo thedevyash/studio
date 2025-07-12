@@ -1,32 +1,24 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check for friendship
+    // Helper function to check if the requesting user is a friend of the resource user
     function isFriend(userId) {
-      // Allow reading if the requesting user's UID is in the target user's 'friends' array.
+      // Allow if the requesting user's ID is in the target user's friend list.
       return request.auth.uid in get(/databases/$(database)/documents/users/$(userId)).data.friends;
     }
-    
-    // Rules for user profile documents
+
+    // Users can only read their own data or data of their friends.
+    // They can only write to their own data.
     match /users/{userId} {
-      // Allow read access if the user is authenticated and is a friend.
-      // Allow anyone to query the collection to find users by email.
-      allow list: if request.auth != null;
-      allow get: if request.auth != null && isFriend(userId);
+      allow read: if request.auth != null && (request.auth.uid == userId || isFriend(userId));
+      allow write: if request.auth != null && request.auth.uid == userId;
 
-      // Allow write access only for the user themselves.
-      allow write: if request.auth.uid == userId;
-    }
-
-    // Rules for user subcollections (e.g., habits, activity)
-    match /users/{userId}/{subcollection}/{docId} {
-        // Allow a user to read a friend's subcollection data (e.g., habits)
-        allow get, list: if request.auth != null && isFriend(userId);
-        
-        // Only allow a user to write to their own subcollections
-        allow write: if request.auth.uid == userId;
+      // Habit and Activity data can be read by friends, but only written by the owner.
+      match /{collection}/{docId} {
+        allow read: if request.auth != null && (request.auth.uid == userId || isFriend(userId));
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
     }
   }
 }

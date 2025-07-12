@@ -134,6 +134,7 @@ function LandingPageContent() {
             </div>
             
             <div className="container mx-auto px-4">
+                <Suspense fallback={<div className="h-screen" />}>
                 <section className="pt-16 pb-16">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold">Why Habit Horizon?</h2>
@@ -215,6 +216,7 @@ function LandingPageContent() {
                         </p>
                     </div>
                 </footer>
+                </Suspense>
             </div>
             
             <AnimatePresence>
@@ -290,3 +292,5 @@ export default function LandingPage() {
     </main>
   );
 }
+
+    

@@ -12,8 +12,8 @@ import ConsistencyChart from "@/components/consistency-chart";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { db } from "@/lib/firebase";
-import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch } from "firebase/firestore";
+import { app } from "@/lib/firebase";
+import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FriendsList from "@/components/friends-list";
 
@@ -33,6 +33,7 @@ export default function Home() {
   }, [user, loading, router]);
   
   const setupInitialData = useCallback(async (uid: string) => {
+    const db = getFirestore(app);
     const todayStr = format(new Date(), 'yyyy-MM-dd');
     const userHabitsRef = collection(db, "users", uid, "habits");
     const userActivityRef = doc(db, "users", uid, "activity", todayStr);
@@ -62,6 +63,7 @@ export default function Home() {
 
   useEffect(() => {
     if (user) {
+      const db = getFirestore(app);
       const unsubscribes: (() => void)[] = [];
       const todayStr = format(new Date(), 'yyyy-MM-dd');
 
@@ -82,6 +84,8 @@ export default function Home() {
         const habitsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Habit));
         setHabits(habitsData);
         if(!isDataLoaded) setIsDataLoaded(true);
+      }, (error) => {
+        console.error("Error fetching habits:", error);
       });
       unsubscribes.push(habitsUnsubscribe);
       
@@ -101,6 +105,7 @@ export default function Home() {
 
   const handleAddHabit = async (name: string, description: string) => {
     if (!user) return;
+    const db = getFirestore(app);
     const newHabit: Omit<Habit, 'id'> = {
       name,
       description,
@@ -116,12 +121,14 @@ export default function Home() {
 
   const handleEditHabit = async (id: string, name: string, description: string) => {
      if (!user) return;
+     const db = getFirestore(app);
      const habitRef = doc(db, "users", user.uid, "habits", id);
      await setDoc(habitRef, { name, description }, { merge: true });
   };
 
   const handleDeleteHabit = async (id: string) => {
     if (!user) return;
+    const db = getFirestore(app);
     const habitRef = doc(db, "users", user.uid, "habits", id);
     const batch = writeBatch(db);
     batch.delete(habitRef);
@@ -130,6 +137,7 @@ export default function Home() {
 
   const handleToggleHabit = (id: string, checked: boolean) => {
     if (!user) return;
+    const db = getFirestore(app);
     const habitToUpdate = habits.find(h => h.id === id);
     if (!habitToUpdate) return;
     
@@ -178,6 +186,7 @@ export default function Home() {
   
   const handleUpdateActivity = async (type: 'water' | 'exercise', value: number | boolean) => {
     if(!user) return;
+    const db = getFirestore(app);
     const todayStr = format(new Date(), 'yyyy-MM-dd');
     const newActivityData = {
       ...activityData,
@@ -190,9 +199,16 @@ export default function Home() {
   };
   
   const handleAddFriend = async (email: string) => {
-    if (!user || !userProfile || user.email === email) return { success: false, message: "You cannot add yourself." };
+    if (!user || !userProfile) return { success: false, message: "Add friend functionality is temporarily disabled." };
+    /*
+    // This query is not allowed by the current Firestore security rules.
+    // It requires an index and a more permissive rule set which is insecure.
+    // We are disabling this functionality for now.
+
+    if (user.email === email) return { success: false, message: "You cannot add yourself." };
     if (userProfile.friends.find(f => f === email)) return { success: false, message: "This user is already your friend." };
 
+    const db = getFirestore(app);
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
@@ -214,11 +230,12 @@ export default function Home() {
     batch.update(friendProfileRef, { friends: [...friendDoc.data().friends, user.uid] });
 
     await batch.commit();
-    return { success: true, message: "Friend added successfully!" };
+    */
+    return { success: false, message: "Add friend functionality is temporarily disabled." };
   };
 
   const completedTodayCount = useMemo(() => {
-    const todayStr = format(new Date(), "yyyy-MM-dd");
+    const todayStr = format(new Date(), "yyyy-M-d");
     return habits.filter(h => (h.history || []).includes(todayStr)).length;
   }, [habits]);
 

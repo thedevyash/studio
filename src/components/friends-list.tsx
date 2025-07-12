@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlusCircle, User, Users } from "lucide-react";
 import { AddFriendDialog } from "./add-friend-dialog";
-import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { getFirestore, collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
+import { app } from "@/lib/firebase";
 import { Skeleton } from "./ui/skeleton";
 
 interface FriendsListProps {
@@ -24,6 +24,7 @@ export default function FriendsList({ userProfile, onAddFriend }: FriendsListPro
 
   useEffect(() => {
     setLoading(true);
+    const db = getFirestore(app);
     if (userProfile.friends && userProfile.friends.length > 0) {
       const unsubscribes = userProfile.friends.map(friendId => {
         const friendRef = doc(db, "users", friendId);
@@ -82,7 +83,7 @@ export default function FriendsList({ userProfile, onAddFriend }: FriendsListPro
                     <div key={friend.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
                         <div className="flex items-center gap-4">
                             <Avatar>
-                                <AvatarImage src={`https://placehold.co/40x40.png`} />
+                                <AvatarImage data-ai-hint="profile picture" src={`https://placehold.co/40x40.png`} />
                                 <AvatarFallback>{friend.email.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div>

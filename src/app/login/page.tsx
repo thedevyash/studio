@@ -27,7 +27,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, setTempUser } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,8 +43,14 @@ export default function LoginPage() {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!isFirebaseConfigured) return;
     setLoading(true);
+    if (!isFirebaseConfigured) {
+      // Bypass Firebase if not configured
+      setTempUser({ email: values.email });
+      router.push("/");
+      return;
+    }
+    
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       router.push("/");
@@ -73,7 +79,7 @@ export default function LoginPage() {
               <Terminal className="h-4 w-4" />
               <AlertTitle>Firebase Not Configured</AlertTitle>
               <AlertDescription>
-                Please add your Firebase credentials to a <code>.env.local</code> file to enable authentication.
+                Using demo mode. Add credentials to <code>.env.local</code> to enable real authentication.
               </AlertDescription>
             </Alert>
           )}
@@ -86,7 +92,7 @@ export default function LoginPage() {
                   <FormItem className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <FormControl>
-                      <Input id="email" type="email" placeholder="m@example.com" {...field} disabled={!isFirebaseConfigured} />
+                      <Input id="email" type="email" placeholder="m@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -99,13 +105,13 @@ export default function LoginPage() {
                   <FormItem className="grid gap-2">
                     <Label htmlFor="password">Password</Label>
                      <FormControl>
-                      <Input id="password" type="password" {...field} disabled={!isFirebaseConfigured} />
+                      <Input id="password" type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={loading || !isFirebaseConfigured}>
+              <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Login
               </Button>

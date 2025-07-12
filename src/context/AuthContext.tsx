@@ -6,21 +6,31 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Loader2 } from 'lucide-react';
 
+// A temporary user type for when Firebase is not configured
+type TempUser = {
+  email: string | null;
+};
+
 interface AuthContextType {
-  user: User | null;
+  user: User | TempUser | null;
   loading: boolean;
+  setTempUser: (user: TempUser | null) => void;
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
+const AuthContext = createContext<AuthContextType>({ user: null, loading: true, setTempUser: () => {} });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | TempUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const setTempUser = (tempUser: TempUser | null) => {
+    setUser(tempUser);
+  }
+
   useEffect(() => {
-    // If Firebase is not configured, auth will be undefined
+    // If Firebase is not configured, don't set up the listener
     if (!auth) {
-        setLoading(false); // Stop loading, let pages handle the redirect
+        setLoading(false);
         return;
     }
 
@@ -32,8 +42,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
+  const value = { user, loading, setTempUser };
+
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

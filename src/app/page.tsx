@@ -13,11 +13,9 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { app } from "@/lib/firebase";
-import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch, updateDoc, arrayUnion } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where, writeBatch, updateDoc, arrayUnion, limit } from "firebase/firestore";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FriendsList from "@/components/friends-list";
-import { findUserByEmail } from "@/ai/flows/find-user-by-email";
-
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -202,20 +200,24 @@ export default function Home() {
   const handleAddFriend = async (email: string) => {
     if (!user || !userProfile) return { success: false, message: "You must be logged in to add friends." };
     if (user.email === email) return { success: false, message: "You cannot add yourself." };
-
+  
     try {
-      const result = await findUserByEmail({ email });
-
-      if (result.error || !result.id) {
-        return { success: false, message: result.error || "User not found." };
+      const db = getFirestore(app);
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('email', '==', email), limit(1));
+      const querySnapshot = await getDocs(q);
+  
+      if (querySnapshot.empty) {
+        return { success: false, message: "User not found with that email." };
       }
-      
-      const friendId = result.id;
+  
+      const friendDoc = querySnapshot.docs[0];
+      const friendId = friendDoc.id;
+  
       if (userProfile.friends.includes(friendId)) {
         return { success: false, message: "This user is already your friend." };
       }
-
-      const db = getFirestore(app);
+  
       const userProfileRef = doc(db, "users", user.uid);
       const friendProfileRef = doc(db, "users", friendId);
       
@@ -223,12 +225,15 @@ export default function Home() {
       batch.update(userProfileRef, { friends: arrayUnion(friendId) });
       batch.update(friendProfileRef, { friends: arrayUnion(user.uid) });
       await batch.commit();
-
+  
       return { success: true, message: `Successfully added ${email} as a friend!` };
-
-    } catch (error) {
+  
+    } catch (error: any) {
         console.error("Error adding friend:", error);
-        return { success: false, message: "An unexpected error occurred while adding friend." };
+        if (error.code === 'permission-denied') {
+             return { success: false, message: "Permission denied. Check Firestore rules and indexes." };
+        }
+        return { success: false, message: "An unexpected error occurred while adding a friend." };
     }
   };
 

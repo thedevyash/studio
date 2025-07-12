@@ -278,20 +278,21 @@ export default function DashboardPage() {
           <TabsContent value="dashboard" className="mt-6">
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <ActivityTracker 
-                      data={activityData}
-                      onUpdate={handleUpdateActivity}
-                  />
-                  <div className="space-y-6">
-                    <ConsistencyChart habits={habits} />
-                    <DailyVitalsChart activityData={historicalActivity} />
-                  </div>
+                <ActivityTracker 
+                  data={activityData}
+                  onUpdate={handleUpdateActivity}
+                />
+                <div className="space-y-6">
+                  <ConsistencyChart habits={habits} />
+                  <DailyVitalsChart activityData={historicalActivity} />
+                </div>
               </div>
+              
               <HabitList
-                  habits={habits}
-                  onToggle={handleToggleHabit}
-                  onEdit={handleEditHabit}
-                  onDelete={handleDeleteHabit}
+                habits={habits}
+                onToggle={handleToggleHabit}
+                onEdit={handleEditHabit}
+                onDelete={handleDeleteHabit}
               />
             </div>
           </TabsContent>
@@ -305,3 +306,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+  

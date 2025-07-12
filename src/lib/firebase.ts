@@ -18,16 +18,23 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
+// Log variables to check if they are loaded correctly
+console.log("Firebase Config Loaded from Environment:");
+console.log("API Key:", process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? "Loaded" : "Missing");
+console.log("Auth Domain:", process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
+console.log("Project ID:", process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+
+
 const requiredEnvVars = [
   'NEXT_PUBLIC_FIREBASE_API_KEY',
   'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
   'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
 ];
 
-const missingEnvVars = requiredEnvVars.filter(key => !process.env[key]);
+const isConfigured = requiredEnvVars.every(key => !!process.env[key]);
 
-if (missingEnvVars.length > 0) {
-    console.warn(`Firebase configuration is missing required environment variables: ${missingEnvVars.join(', ')}. Firebase features will be disabled. Please check your .env.local file.`);
+if (!isConfigured) {
+    console.warn(`Firebase configuration is incomplete. Some features will be disabled. Please check your .env.local file.`);
 } else {
     // Initialize Firebase
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -35,4 +42,4 @@ if (missingEnvVars.length > 0) {
     db = getFirestore(app);
 }
 
-export { app, auth, db };
+export { app, auth, db, isConfigured };

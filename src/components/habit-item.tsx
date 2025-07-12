@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import type { Habit } from "@/types";
-import { format, isToday, parseISO } from "date-fns";
+import { isToday, parseISO } from "date-fns";
 import { Flame, MoreVertical, Pencil, Sparkles, Trash2, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { EditHabitDialog } from "@/components/edit-habit-dialog";
 import { MotivationModal } from "@/components/motivation-modal";
+import { HabitPlant } from "./habit-plant";
 
 interface HabitItemProps {
   habit: Habit;
@@ -29,21 +29,23 @@ export function HabitItem({ habit, onToggle, onEdit, onDelete }: HabitItemProps)
 
   const isCompletedToday = habit.lastCompleted ? isToday(parseISO(habit.lastCompleted + "T00:00:00")) : false;
 
+  const handleToggle = () => {
+    onToggle(habit.id, !isCompletedToday);
+  };
+
   return (
     <>
       <Card className="transition-all hover:shadow-lg hover:-translate-y-1 duration-300 ease-in-out">
         <CardContent className="p-4 flex items-center gap-4">
-          <Checkbox
-            id={`habit-${habit.id}`}
-            checked={isCompletedToday}
-            onCheckedChange={(checked) => onToggle(habit.id, !!checked)}
-            className="w-6 h-6 rounded-full"
-            aria-label={`Mark ${habit.name} as completed`}
+          <HabitPlant 
+            growthStage={habit.growthStage || 0}
+            isCompleted={isCompletedToday}
+            onToggle={handleToggle}
           />
-          <div className="flex-grow">
-            <label htmlFor={`habit-${habit.id}`} className="font-semibold text-lg cursor-pointer">
+          <div className="flex-grow cursor-pointer" onClick={handleToggle}>
+            <p className="font-semibold text-lg">
               {habit.name}
-            </label>
+            </p>
             <p className="text-sm text-muted-foreground">{habit.description}</p>
           </div>
           <div className="flex items-center gap-4 text-muted-foreground">

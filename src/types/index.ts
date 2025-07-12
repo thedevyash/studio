@@ -6,6 +6,7 @@ export interface Habit {
   longestStreak: number;
   lastCompleted: string | null; // Date string in 'yyyy-MM-dd' format
   history: string[]; // Array of 'yyyy-MM-dd' date strings
+  growthStage: number; // 0 for sprout, up to 5 for mature plant
 }
 
 export interface ActivityData {

@@ -24,6 +24,7 @@ export default function Home() {
         const migratedHabits = parsedHabits.map(habit => ({
           ...habit,
           history: habit.history || [],
+          growthStage: habit.growthStage ?? 0,
         }));
         setHabits(migratedHabits);
       }
@@ -68,6 +69,7 @@ export default function Home() {
       longestStreak: 0,
       lastCompleted: null,
       history: [],
+      growthStage: 0,
     };
     setHabits((prev) => [...prev, newHabit]);
   };
@@ -92,13 +94,16 @@ export default function Home() {
         const todayStr = format(new Date(), 'yyyy-MM-dd');
         
         if (checked) {
-          if (habit.history?.includes(todayStr)) return habit;
+          if ((habit.history || []).includes(todayStr)) return habit;
 
           const lastDate = habit.lastCompleted ? parse(habit.lastCompleted, 'yyyy-MM-dd', new Date()) : null;
           const diff = lastDate ? differenceInCalendarDays(new Date(), lastDate) : Infinity;
 
           const newStreak = (diff === 1) ? habit.currentStreak + 1 : 1;
           const newHistory = [...(habit.history || []), todayStr].sort().reverse();
+          
+          // Increment growth stage, max out at 5
+          const newGrowthStage = Math.min((habit.growthStage || 0) + 1, 5);
 
           return {
             ...habit,
@@ -106,20 +111,25 @@ export default function Home() {
             longestStreak: Math.max(habit.longestStreak, newStreak),
             lastCompleted: todayStr,
             history: newHistory,
+            growthStage: newGrowthStage,
           };
         } else {
-          if (!habit.history?.includes(todayStr)) return habit;
+          if (!(habit.history || []).includes(todayStr)) return habit;
 
           const newHistory = (habit.history || []).filter(d => d !== todayStr);
           // Simplified streak recalculation. A more robust solution would re-evaluate the entire history.
           const newStreak = habit.currentStreak > 0 ? habit.currentStreak - 1 : 0;
           const lastCompleted = newHistory.length > 0 ? newHistory[0] : null;
 
+          // Decrement growth stage, min at 0
+          const newGrowthStage = Math.max((habit.growthStage || 0) - 1, 0);
+
           return {
             ...habit,
             currentStreak: newStreak,
             lastCompleted: lastCompleted,
             history: newHistory,
+            growthStage: newGrowthStage,
           };
         }
       })

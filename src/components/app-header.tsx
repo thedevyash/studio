@@ -35,7 +35,7 @@ export default function AppHeader({ userProfile, onAddHabit, completedTodayCount
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      router.push('/login');
+      router.push('/landing');
     } catch (error) {
       console.error("Failed to log out", error);
     }

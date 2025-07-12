@@ -276,7 +276,8 @@ export default function DashboardPage() {
               <TabsTrigger value="friends">Friends</TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <ActivityTracker 
                       data={activityData}
                       onUpdate={handleUpdateActivity}
@@ -292,6 +293,7 @@ export default function DashboardPage() {
                   onEdit={handleEditHabit}
                   onDelete={handleDeleteHabit}
               />
+            </div>
           </TabsContent>
           <TabsContent value="friends" className="mt-6">
               <FriendsList
@@ -303,5 +305,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
